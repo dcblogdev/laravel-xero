@@ -1,5 +1,5 @@
 
-# Laravel Dropbox
+# Laravel Xero - WIP
 
 A Laravel package for working with Xero API.
 
