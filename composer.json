@@ -1,0 +1,32 @@
+{
+    "name": "dcblogdev/laravel-xero",
+    "description": "A Laravel Xero package",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Carr",
+            "email": "dave@dcblog.dev",
+            "homepage": "https://dcblog.dev"
+        }
+    ],
+    "homepage": "https://github.com/dcblogdev/laravel-xero",
+    "keywords": ["Laravel", "Xero"],
+    "require": {
+        "guzzlehttp/guzzle": "^6|^7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Dcblogdev\\Xero\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dcblogdev\\Xero\\XeroServiceProvider"
+            ],
+            "aliases": {
+                "Xero": "Dcblogdev\\Xero\\Facades\\Xero"
+            }
+        }
+    }
+}
