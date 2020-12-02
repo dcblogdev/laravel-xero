@@ -13,7 +13,7 @@ return [
     'clientSecret' => env('XERO_CLIENT_SECRET'),
 
     /*
-    * Set the url to trigger the oauth process this url should call return MsGraph::connect();
+    * Set the url to trigger the oauth process
     */
     'redirectUri' => env('XERO_REDIRECT_URL'),
 
