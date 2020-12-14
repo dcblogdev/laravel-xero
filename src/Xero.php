@@ -6,6 +6,7 @@ use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\Invoices;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Exception;
 
 class Xero
@@ -245,7 +246,7 @@ class Xero
      * @param  $type string
      * @param  $request string
      * @param  $data array
-     * @return json object
+     * @return array object
      */
     protected function guzzle($type, $request, $data = [])
     {
@@ -267,6 +268,8 @@ class Xero
                 'body' => json_decode($response->getBody()->getContents(), true),
                 'headers' => $response->getHeaders()
             ];
+        } catch (ClientException $e) {
+            throw new Exception($e->getResponse()->getBody()->getContents());
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }

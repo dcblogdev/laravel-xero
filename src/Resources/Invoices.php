@@ -25,9 +25,16 @@ class Invoices extends Xero
         return $result['body']['Invoices'][0];
     }
 
-    public function update(string $contactId, array $data) 
+    public function onlineUrl(string $invoiceId)
     {
-        $result = Xero::post('invoices/'.$contactId, $data);
+        $result = Xero::get('invoices/'.$invoiceId.'/OnlineInvoice');
+
+        return $result['body']['OnlineInvoices'][0]['OnlineInvoiceUrl'];
+    }
+
+    public function update(string $invoiceId, array $data)
+    {
+        $result = Xero::post('invoices/'.$invoiceId, $data);
 
         return $result['body']['Invoices'][0];
     }
