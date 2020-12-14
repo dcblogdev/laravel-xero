@@ -5,6 +5,7 @@ namespace Dcblogdev\Xero;
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\Invoices;
+use Dcblogdev\Xero\Resources\Webhooks;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Exception;
@@ -25,6 +26,11 @@ class Xero
     public function invoices()
     {
         return new Invoices();
+    }
+
+    public function webhooks()
+    {
+        return new Webhooks();
     }
 
     public function isConnected()
