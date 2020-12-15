@@ -1,5 +1,5 @@
 
-# Laravel Xero - WIP
+# Laravel Xero
 
 A Laravel package for working with Xero API.
 
