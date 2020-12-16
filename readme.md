@@ -3,6 +3,55 @@
 
 A Laravel package for working with Xero API.
 
+## Register Xero App
+
+Before you can integrate with Xero you will need to create an app, go to https://developer.xero.com/myapps to register a new app.
+
+For the grant type select Auth code (web app)
+For OAuth 2.0 redirect URI enter the full URL you want to use for connection to Xero from your application such as `https://domain.com/xero/connect` 
+
+Take note of the Client id and secret they are needed in .env see below.
+
+## Installation
+
+You can install the package via composer:
+
+```
+composer require dcblogdev/laravel-xero
+```
+
+## Config
+
+You can publish the config file with:
+
+```
+php artisan vendor:publish --provider="Dcblogdev\Xero\XeroServiceProvider" --tag="config"
+```
+
+## Migration
+You can publish the migration with:
+
+```
+php artisan vendor:publish --provider="Dcblogdev\Xero\XeroServiceProvider" --tag="migrations"
+```
+
+After the migration has been published you can create the tokens tables by running the migration:
+
+```
+php artisan migrate
+```
+
+## .ENV Configuration
+Ensure you've set the following in your .env file:
+
+```
+XERO_CLIENT_ID=
+XERO_CLIENT_SECRET=
+XERO_REDIRECT_URL=https://domain.com/xero/connect
+XERO_LANDING_URL=https://domain.com/xero
+XERO_WEBHOOK_KEY=
+```
+
 ## Change log
 
 Please see the [changelog][3] for more information on what has changed recently.
