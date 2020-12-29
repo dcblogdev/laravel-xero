@@ -4,7 +4,7 @@
 
 ![Logo](https://repository-images.githubusercontent.com/317929912/1e40a180-49c1-11eb-893d-af9c59d29ad5)
 
-Takes a JSON payload and replaces either a key or value from a provided array.
+Laravel package for working with the Xero API
 
 # Documentation and install instructions 
 [https://dcblog.dev/docs/laravel-xero](https://dcblog.dev/docs/laravel-xero)
