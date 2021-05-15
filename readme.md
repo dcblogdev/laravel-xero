@@ -6,6 +6,8 @@
 
 Laravel package for working with the Xero API
 
+Watch a video walkthrough https://www.youtube.com/watch?v=sORX2z-AH1k
+
 # Documentation and install instructions 
 [https://dcblog.dev/docs/laravel-xero](https://dcblog.dev/docs/laravel-xero)
 
