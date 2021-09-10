@@ -137,7 +137,7 @@ class Xero
     /**
      * Return authenticated access token or request new token when expired
      * @param  $id integer - id of the user
-     * @return return string access token
+     * @return string
      */
     public function getAccessToken()
     {
