@@ -194,18 +194,19 @@ class Xero
 
     /**
      * __call catches all requests when no found method is requested
-     * @param  $function - the verb to execute
-     * @param  $args - array of arguments
-     * @return gizzle request
+     * @param string $function - the verb to execute
+     * @param array $args - array of arguments
+     * @return array
      */
     public function __call($function, $args)
     {
         $options = ['get', 'post', 'patch', 'put', 'delete'];
-        $path = (isset($args[0])) ? $args[0] : null;
-        $data = (isset($args[1])) ? $args[1] : null;
+        $path = (isset($args[0])) ? $args[0] : '';
+        $data = (isset($args[1])) ? $args[1] : [];
+        $raw = (isset($args[2])) ? $args[2] : false;
 
         if (in_array($function, $options)) {
-            return self::guzzle($function, $path, $data);
+            return $this->guzzle($function, $path, $data, $raw);
         } else {
             //request verb is not in the $options array
             throw new Exception($function . ' is not a valid HTTP Verb');
@@ -249,12 +250,13 @@ class Xero
 
     /**
      * run guzzle to process requested url
-     * @param  $type string
-     * @param  $request string
-     * @param  $data array
-     * @return array object
+     * @param string $type
+     * @param string $request
+     * @param array $data
+     * @param bool $raw
+     * @return array
      */
-    protected function guzzle($type, $request, $data = [])
+    protected function guzzle($type, $request, $data = [], $raw = false)
     {
         try {
             $client = new Client;
@@ -267,7 +269,7 @@ class Xero
 
             $response = $client->$type(self::$baseUrl . $request, [
                 'headers' => $headers,
-                'body' => json_encode($data)
+                'body' => $raw ? $data : json_encode($data),
             ]);
 
             return [
