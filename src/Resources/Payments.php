@@ -4,7 +4,7 @@ namespace Dcblogdev\Xero\Resources;
 
 use Dcblogdev\Xero\Facades\Xero;
 
-class Payments extends XeroModified
+class Payments extends Xero
 {
     public function payments()
     {
