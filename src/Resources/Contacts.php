@@ -6,7 +6,7 @@ use Dcblogdev\Xero\Facades\Xero;
 
 class Contacts extends Xero
 {
-    public function get(int $page = 1, string $where = null)
+    public function get(int $page = null, string $where = null)
     {
         $params = http_build_query([
             'page' => $page,
