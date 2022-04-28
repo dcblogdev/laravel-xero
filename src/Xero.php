@@ -17,7 +17,13 @@ class Xero
     protected static $connectionUrl = 'https://api.xero.com/connections';
     protected static $tokenUrl      = 'https://identity.xero.com/connect/token';
     protected static $revokeUrl     = 'https://identity.xero.com/connect/revocation';
+    
+    public $tenant_id;
 
+    public function setTenantId($tenant_id = 0) {
+        $this->tenant_id = $tenant_id;
+    }
+    
     public function contacts()
     {
         return new Contacts();
@@ -133,7 +139,13 @@ class Xero
      */
     public function getTokenData()
     {
+        
+        if($this->tenant_id) {
+            return XeroToken::where('id', '=', $this->tenant_id)->first();
+        }
+        
         return XeroToken::first();
+        
     }
 
     /**
