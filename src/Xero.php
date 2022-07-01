@@ -17,7 +17,13 @@ class Xero
     protected static $connectionUrl = 'https://api.xero.com/connections';
     protected static $tokenUrl      = 'https://identity.xero.com/connect/token';
     protected static $revokeUrl     = 'https://identity.xero.com/connect/revocation';
+    
+    public $tenant_id;
 
+    public function setTenantId($tenant_id = 0) {
+        $this->tenant_id = $tenant_id;
+    }
+    
     public function contacts()
     {
         return new Contacts();
@@ -103,16 +109,18 @@ class Xero
 
                     $result = json_decode($response->getBody()->getContents(), true);
                     
-                    $tenantData = [
-                        'auth_event_id'    => $result[0]['authEventId'],
-                        'tenant_id'       => $result[0]['tenantId'],
-                        'tenant_type'     => $result[0]['tenantType'],
-                        'tenant_name'     => $result[0]['tenantName'],
-                        'created_date_utc' => $result[0]['createdDateUtc'],
-                        'updated_date_utc' => $result[0]['updatedDateUtc']
-                    ];
+                    foreach($result as $tenant) {
+                        $tenantData = [
+                            'auth_event_id'     => $tenant['authEventId'],
+                            'tenant_id'         => $tenant['tenantId'],
+                            'tenant_type'       => $tenant['tenantType'],
+                            'tenant_name'       => $tenant['tenantName'],
+                            'created_date_utc'  => $tenant['createdDateUtc'],
+                            'updated_date_utc'  => $tenant['updatedDateUtc']
+                        ];
 
-                    $this->storeToken($resultCode, $tenantData);
+                        $this->storeToken($resultCode, $tenantData);
+                    }
 
                 } catch (Exception $e) {
                     throw new Exception('error getting tenant: '.$e->getMessage());
@@ -131,7 +139,13 @@ class Xero
      */
     public function getTokenData()
     {
+        
+        if($this->tenant_id) {
+            return XeroToken::where('id', '=', $this->tenant_id)->first();
+        }
+        
         return XeroToken::first();
+        
     }
 
     /**
@@ -245,7 +259,7 @@ class Xero
         }
 
         //cretate a new record or if the user id exists update record
-        return XeroToken::updateOrCreate(['id' => 1], $data);
+        return XeroToken::updateOrCreate(['tenant_id' => $data['tenant_id']], $data);
     }
 
     /**
