@@ -74,6 +74,16 @@ To access token model reference this ORM model:
 use Dcblogdev\Xero\Models\XeroToken;
 ```
 
+# Multi-tenancy
+
+To set the tenant call `setTenantId` and pass in your tenant_id
+
+Once set all calls will use the set tenant. 
+
+```php
+setTenantId($tenant_id)
+```
+
 # Usage
 
 A routes example:
