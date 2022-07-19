@@ -245,10 +245,6 @@ class Xero
         ];
 
         if ($tenantData != null) {
-            $data = array_merge($data, $tenantData);
-        }
-
-        if ($tenantData != null) {
             $data  = array_merge($data, $tenantData);
             $where = ['tenant_id' => $data['tenant_id']];
         } else {
