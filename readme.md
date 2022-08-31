@@ -84,6 +84,26 @@ Once set all calls will use the set tenant.
 setTenantId($tenant_id)
 ```
 
+# Commands
+
+## Refresh Token
+
+When using Xero as a background process, tokens will need to be renwed, to automate this process use the command:
+
+```
+php artisan xero:keep-alive
+```
+
+This will refresh the token when its due to expire.
+Its recommended to add this to a schedule ie inside `App\Console\Kernal.php` add the command to a schedule.
+
+```php 
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('xero:keep-alive')->everyFiveMinutes();
+}
+```
+
 # Usage
 
 A routes example:
