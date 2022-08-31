@@ -146,11 +146,11 @@ class Xero
      * @param  $id integer - id of the user
      * @return string
      */
-    public function getAccessToken()
+    public function getAccessToken($redirectWhenNotConnected = true)
     {
         $token = $this->getTokenData();
 
-        $this->redirectIfNoToken($token);
+        $this->redirectIfNoToken($token, $redirectWhenNotConnected);
 
         // Check if token is expired
         // Get current time + 5 minutes (to allow for time differences)
@@ -219,10 +219,10 @@ class Xero
         }
     }
 
-    protected function redirectIfNoToken($token)
+    protected function redirectIfNoToken($token, $redirectWhenNotConnected = true)
     {
         // Check if tokens exist otherwise run the oauth request
-        if (!$this->isConnected()) {
+        if (!$this->isConnected() && $redirectWhenNotConnected === true) {
             return redirect()->away(config('xero.redirectUri'));
         }
     }
