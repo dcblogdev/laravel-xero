@@ -25,3 +25,7 @@ All notable changes to `Laravel Xero` will be documented in this file.
 ## Version 1.1.1
 
 - Add new command keep-alive
+
+## Version 1.1.2
+
+- Added command `xero:show-all` to show all tokens stored in the database.
