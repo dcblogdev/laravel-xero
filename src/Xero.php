@@ -244,7 +244,9 @@ class Xero
             'scopes'        => $token['scope']
         ];
 
-        if ($tenantData != null) {
+        if($this->tenant_id) {
+            $where = ['id' => $this->tenant_id];
+        } else if ($tenantData != null) {
             $data  = array_merge($data, $tenantData);
             $where = ['tenant_id' => $data['tenant_id']];
         } else {
