@@ -14,7 +14,7 @@ class XeroKeepAliveCommand extends Command
     public function handle()
     {
         // Fetch all tenants for when multiple tenants are in use.
-        $tenants    = XeroToken::all();
+        $tenants = XeroToken::all();
 
         foreach($tenants as $tenant) {
 
