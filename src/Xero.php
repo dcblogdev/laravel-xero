@@ -155,7 +155,7 @@ class Xero
         // Check if token is expired
         // Get current time + 5 minutes (to allow for time differences)
         $now = time() + 300;
-        if ($token->expires <= $now) {
+        if ($token->expires_in <= $now) {
             // Token is expired (or very close to it) so let's refresh
 
             $params = [
@@ -244,7 +244,9 @@ class Xero
             'scopes'        => $token['scope']
         ];
 
-        if ($tenantData != null) {
+        if($this->tenant_id) {
+            $where = ['id' => $this->tenant_id];
+        } else if ($tenantData != null) {
             $data  = array_merge($data, $tenantData);
             $where = ['tenant_id' => $data['tenant_id']];
         } else {
