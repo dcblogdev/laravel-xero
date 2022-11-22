@@ -29,3 +29,7 @@ All notable changes to `Laravel Xero` will be documented in this file.
 ## Version 1.1.2
 
 - Added command `xero:show-all` to show all tokens stored in the database.
+
+## Version 1.1.3
+
+- Update keep-alive for multi-tenant use, and storeToken where id when using tenant_id in the class

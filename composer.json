@@ -12,12 +12,30 @@
     "homepage": "https://github.com/dcblogdev/laravel-xero",
     "keywords": ["Laravel", "Xero"],
     "require": {
-        "guzzlehttp/guzzle": "^6|^7"
+        "illuminate/support": "5.5.x|5.6.x|5.7.x|5.8.x|6.x|7.x|8.x|9.x",
+        "league/oauth2-client": "^1.4|^2",
+        "guzzlehttp/guzzle": "6.x|7.x",
+        "ext-json": "*",
+        "ext-fileinfo": "*",
+        "ext-curl": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "friendsofphp/php-cs-fixer": "^3.9",
+        "pestphp/pest-plugin-mock": "^1.0"
     },
     "autoload": {
         "psr-4": {
-            "Dcblogdev\\Xero\\": "src/"
+            "Dcblogdev\\Xero\\": "src/",
+            "Dcblogdev\\Xero\\Tests\\": "tests"
         }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/TestCase.php"
+        ]
     },
     "extra": {
         "laravel": {
@@ -27,6 +45,11 @@
             "aliases": {
                 "Xero": "Dcblogdev\\Xero\\Facades\\Xero"
             }
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     }
 }

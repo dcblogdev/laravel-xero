@@ -145,6 +145,7 @@ class Xero
 
         // Check if token is expired / expiring in the next 5 minutes
         // Get current time + 5 minutes (to allow for time differences)
+        // using now so that Carbon::faking works
         $now = now()->addMinutes(5);
 
         if ($token->expires->isBefore($now)) {
@@ -236,7 +237,9 @@ class Xero
             'scopes'        => $token['scope']
         ];
 
-        if ($tenantData !== null) {
+        if ($this->tenant_id) {
+            $where = ['id' => $this->tenant_id];
+        } elseif ($tenantData !== null) {
             $data  = array_merge($data, $tenantData);
             $where = ['tenant_id' => $data['tenant_id']];
         } else {
