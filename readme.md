@@ -282,37 +282,37 @@ $where allows for filter options to be passed, the most common filters have been
 Filter by status:
 
 ```php
-Xero::contacts()->get(1, 'Status="AUTHORISED"')
+Xero::invoices()->get(1, 'Status="AUTHORISED"')
 ```
 
 Filter by contact id:
 
 ```php
-Xero::contacts()->get(1, 'Contact.ContactID=guid("96988e67-ecf9-466d-bfbf-0afa1725a649")')
+Xero::invoices()->get(1, 'Contact.ContactID=guid("96988e67-ecf9-466d-bfbf-0afa1725a649")')
 ```
 
 Filter by contact number
 
 ```php
-Xero::contacts()->get(1, 'Contact.ContactNumber="ID001"')
+Xero::invoices()->get(1, 'Contact.ContactNumber="ID001"')
 ```
 
 Filter by reference
 
 ```php
-Xero::contacts()->get(1, 'Reference="INV-0001"')
+Xero::invoices()->get(1, 'Reference="INV-0001"')
 ```
 
 Filter by date
 
 ```php
-Xero::contacts()->get(1, 'Date=DateTime(2020, 01, 01)')
+Xero::invoices()->get(1, 'Date=DateTime(2020, 01, 01)')
 ```
 
 Filter by type
 
 ```php
-Xero::contacts()->get(1, 'Type="ACCREC"')
+Xero::invoices()->get(1, 'Type="ACCREC"')
 ```
 
 ## View Invoice
