@@ -264,8 +264,6 @@ class Xero
                 'Xero-tenant-id' => $this->getTenantId(),
             ])->acceptJson()->$type(self::$baseUrl . $request, $data)->throw();
 
-            dump($response->getBody()->getContents());
-
             return [
                 'body'    => $response->json(),
                 'headers' => $response->getHeaders()
