@@ -203,9 +203,10 @@ class Xero
         $path    = (isset($args[0])) ? $args[0] : '';
         $data    = (isset($args[1])) ? $args[1] : [];
         $raw     = (isset($args[2])) ? $args[2] : false;
+        $accept  = (isset($args[3])) ? $args[3] : 'application/json';
 
         if (in_array($function, $options)) {
-            return $this->guzzle($function, $path, $data, $raw);
+            return $this->guzzle($function, $path, $data, $raw, $accept);
         } else {
             //request verb is not in the $options array
             throw new Exception($function . ' is not a valid HTTP Verb');
@@ -257,17 +258,17 @@ class Xero
      * @param  bool  $raw
      * @return array
      */
-    protected function guzzle($type, $request, $data = [], $raw = false)
+    protected function guzzle($type, $request, $data = [], $raw = false, $accept = 'application/json')
     {
         try {
-            $response = Http::withToken($this->getAccessToken())->withHeaders([
-                'Xero-tenant-id' => $this->getTenantId(),
-            ])->acceptJson()->$type(self::$baseUrl . $request, $data)->throw();
-
-            dump($response->getBody()->getContents());
+            $response = Http::withToken($this->getAccessToken())
+                ->withHeaders(['Xero-tenant-id' => $this->getTenantId()])
+                ->accept($accept)
+                ->$type(self::$baseUrl . $request, $data)
+                ->throw();
 
             return [
-                'body'    => $response->json(),
+                'body'    => $raw ? $response->body() : $response->json(),
                 'headers' => $response->getHeaders()
             ];
         } catch (RequestException $e) {
