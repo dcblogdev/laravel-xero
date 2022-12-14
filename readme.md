@@ -78,7 +78,7 @@ use Dcblogdev\Xero\Models\XeroToken;
 
 To set the tenant call `setTenantId` and pass in your tenant_id
 
-Once set all calls will use the set tenant. 
+Once set all calls will use the set tenant.
 
 ```php
 setTenantId($tenant_id)
@@ -97,7 +97,7 @@ php artisan xero:keep-alive
 This will refresh the token when its due to expire.
 Its recommended to add this to a schedule ie inside `App\Console\Kernal.php` add the command to a schedule.
 
-```php 
+```php
 protected function schedule(Schedule $schedule)
 {
     $schedule->command('xero:keep-alive')->everyFiveMinutes();
@@ -163,7 +163,7 @@ Xero::get('contacts')
 
 # Is Connected
 
-Anytime you need to check if Xero is authenticated you can call a ->isConnected method. The method returns a boolean. 
+Anytime you need to check if Xero is authenticated you can call a ->isConnected method. The method returns a boolean.
 
 To do an action when a Xero is not connected can be done like this:
 
@@ -345,6 +345,14 @@ See https://developer.xero.com/documentation/api/invoices#post for details on th
 
 ```php
 Xero::invoices()->update($invoiceId, $data);
+```
+
+## PDF resources
+Some Xero resources support being downloaded as PDF. To do this you can:
+
+```php
+$pdfInvoice = Xero::get("invoices/{$invoiceId}", null, true, 'application/pdf');
+$pdfInvoice['body']; // will be the pdf as a pdf string for you to write out to storage etc.
 ```
 
 ## Change log
