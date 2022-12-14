@@ -15,6 +15,8 @@ class XeroToken extends Model
      */
     protected function expires(): Attribute
     {
-        return Attribute::get(fn(): Carbon => $this->updated_at->addSeconds($this->expires_in));
+        return Attribute::get(
+            fn(): Carbon => $this->updated_at->addSeconds($this->expires_in)
+        );
     }
 }
