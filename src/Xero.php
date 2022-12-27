@@ -54,16 +54,16 @@ class Xero
             $token  = $this->getTokenData();
 
             Http::withHeaders([
-                'authorization' => "Basic ".base64_encode(config('xero.clientId').":".config('xero.clientSecret'))
+                'authorization' => "Basic " . base64_encode(config('xero.clientId') . ":" . config('xero.clientSecret'))
             ])
-            ->asForm()
-            ->post(self::$revokeUrl, [
-                'token' => $token->refresh_token,
-            ])->throw();
+                ->asForm()
+                ->post(self::$revokeUrl, [
+                    'token' => $token->refresh_token,
+                ])->throw();
 
             $token->delete();
         } catch (Exception $e) {
-            throw new RuntimeException('error getting tenant: '.$e->getMessage());
+            throw new RuntimeException('error getting tenant: ' . $e->getMessage());
         }
     }
 
@@ -74,7 +74,7 @@ class Xero
     public function connect(): RedirectResponse|Application|Redirector
     {
         //when no code param redirect to Microsoft
-        if (! request()->has('code')) {
+        if (!request()->has('code')) {
             $url = self::$authorizeUrl . '?' . http_build_query([
                 'response_type' => 'code',
                 'client_id'     => config('xero.clientId'),
@@ -200,14 +200,14 @@ class Xero
             return $this->guzzle($function, $path, $data, $raw, $accept);
         } else {
             //request verb is not in the $options array
-            throw new RuntimeException($function.' is not a valid HTTP Verb');
+            throw new RuntimeException($function . ' is not a valid HTTP Verb');
         }
     }
 
     protected function redirectIfNoToken($token, $redirectWhenNotConnected = true)
     {
         // Check if tokens exist otherwise run the oauth request
-        if (! $this->isConnected() && $redirectWhenNotConnected === true) {
+        if (!$this->isConnected() && $redirectWhenNotConnected === true) {
             return redirect()->away(config('xero.redirectUri'));
         }
     }
@@ -252,8 +252,18 @@ class Xero
     protected function guzzle($type, $request, $data = [], $raw = false, $accept = 'application/json')
     {
         try {
+
+            $headers = [
+                'Xero-tenant-id' => $this->getTenantId(),
+            ];
+
+            if (array_key_exists("ModifiedAfter", $data)) {
+                $headers["If-Modified-Since"] = $data["ModifiedAfter"];
+            }
+
+
             $response = Http::withToken($this->getAccessToken())
-                ->withHeaders(['Xero-tenant-id' => $this->getTenantId()])
+                ->withHeaders($headers)
                 ->accept($accept)
                 ->$type(self::$baseUrl . $request, $data)
                 ->throw();
