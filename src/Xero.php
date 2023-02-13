@@ -140,8 +140,7 @@ class Xero
         $now = now()->addMinutes(5);
 
         if ($token->expires_in < $now) {
-
-            $token = $this->renewExpiringToken($token);
+            return $this->renewExpiringToken($token);
         }
 
         return $token->access_token;
