@@ -33,6 +33,14 @@ You can publish the config file with:
 php artisan vendor:publish --provider="Dcblogdev\Xero\XeroServiceProvider" --tag="config"
 ```
 
+# Encrypt Tokens at rest
+You can enable token encryption at rest by setting the following in your .env file:
+
+```
+XERO_ENCRYPT=true
+```
+this will use the native Laravel Crypt library to ensure the tokens are encrypted at rest.
+
 # Migration
 
 You can publish the migration with:
