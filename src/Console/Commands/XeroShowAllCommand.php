@@ -33,12 +33,21 @@ class XeroShowAllCommand extends Command
             'tenant_id',
             'updated_at',
         ];
+
         // Fetch all access tokens
-        $tokens = XeroToken::select($dataToDisplay)->get()->toArray();
+        $tokens = XeroToken::select($dataToDisplay)->get();
+
+        if(config('xero.encrypt')) {
+            $tokens->map(function($token) {
+                $token->access_token = decrypt($token->access_token);
+                $token->refresh_token = decrypt($token->refresh_token);
+                return $token;
+            });
+        }
 
         $this->table(
             $dataToDisplay,
-            $tokens
+            $tokens->toArray()
         );
     }
 }

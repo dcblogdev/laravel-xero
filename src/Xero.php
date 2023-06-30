@@ -11,6 +11,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
@@ -74,16 +75,7 @@ class Xero
     public function connect(): RedirectResponse|Application|Redirector
     {
         //when no code param redirect to Microsoft
-        if (! request()->has('code')) {
-            $url = self::$authorizeUrl . '?' . http_build_query([
-                'response_type' => 'code',
-                'client_id'     => config('xero.clientId'),
-                'redirect_uri'  => config('xero.redirectUri'),
-                'scope'         => config('xero.scopes')
-            ]);
-
-            return redirect()->away($url);
-        } elseif (request()->has('code')) {
+        if (request()->has('code')) {
             // With the authorization code, we can retrieve access tokens and other data.
             try {
                 $params = [
@@ -120,15 +112,31 @@ class Xero
                 throw new Exception($e->getMessage());
             }
         }
+
+        $url = self::$authorizeUrl . '?' . http_build_query([
+                'response_type' => 'code',
+                'client_id'     => config('xero.clientId'),
+                'redirect_uri'  => config('xero.redirectUri'),
+                'scope'         => config('xero.scopes')
+            ]);
+
+        return redirect()->away($url);
     }
 
     public function getTokenData(): XeroToken|null
     {
         if ($this->tenant_id) {
-            return XeroToken::where('id', '=', $this->tenant_id)->first();
+            $token = XeroToken::where('id', '=', $this->tenant_id)->first();
+        } else {
+            $token = XeroToken::first();
         }
 
-        return XeroToken::first();
+        if(config('xero.encryptToken')) {
+            $token->access_token = Crypt::decryptString($token->access_token);
+            $token->refresh_token = Crypt::decryptString($token->refresh_token);
+        }
+
+        return $token;
     }
 
     public function getAccessToken($redirectWhenNotConnected = true): string
@@ -221,10 +229,10 @@ class Xero
     {
         $data = [
             'id_token'      => $token['id_token'],
-            'access_token'  => $token['access_token'],
+            'access_token'  => config('xero.landingUri') ? Crypt::encryptString($token['access_token']) : $token['access_token'],
             'expires_in'    => $token['expires_in'],
             'token_type'    => $token['token_type'],
-            'refresh_token' => $token['refresh_token'],
+            'refresh_token' => config('xero.landingUri') ? Crypt::encryptString($token['refresh_token']) : $token['refresh_token'],
             'scopes'        => $token['scope']
         ];
 
