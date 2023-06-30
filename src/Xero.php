@@ -229,10 +229,10 @@ class Xero
     {
         $data = [
             'id_token'      => $token['id_token'],
-            'access_token'  => config('xero.landingUri') ? Crypt::encryptString($token['access_token']) : $token['access_token'],
+            'access_token'  => config('xero.encrypt') ? Crypt::encryptString($token['access_token']) : $token['access_token'],
             'expires_in'    => $token['expires_in'],
             'token_type'    => $token['token_type'],
-            'refresh_token' => config('xero.landingUri') ? Crypt::encryptString($token['refresh_token']) : $token['refresh_token'],
+            'refresh_token' => config('xero.encrypt') ? Crypt::encryptString($token['refresh_token']) : $token['refresh_token'],
             'scopes'        => $token['scope']
         ];
 
