@@ -191,7 +191,7 @@ class Xero
     {
         $options = ['get', 'post', 'patch', 'put', 'delete'];
         $path    = $args[0] ?? '';
-        $data    = $args[1] ?? [];
+        $data    = $args[1] ?? null;
         $raw     = $args[2] ?? false;
         $accept  = $args[3] ?? 'application/json';
 
@@ -248,7 +248,7 @@ class Xero
      * @param  bool  $raw
      * @return array
      */
-    protected function guzzle($type, $request, $data = [], $raw = false, $accept = 'application/json')
+    protected function guzzle($type, $request, $data = null, $raw = false, $accept = 'application/json')
     {
         try {
             $response = Http::withToken($this->getAccessToken())
