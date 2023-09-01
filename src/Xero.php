@@ -156,7 +156,7 @@ class Xero
 
         $resultCode = $this->dopost(self::$tokenUrl, $params);
 
-        $this->storeToken($resultCode, ['tenant_id' => $token->tenant_id);
+        $this->storeToken($resultCode, ['tenant_id' => $token->tenant_id]);
 
         return $resultCode['access_token'];
     }
