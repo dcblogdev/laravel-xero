@@ -125,7 +125,7 @@ class Xero
     public function getTokenData(): XeroToken|null
     {
         if ($this->tenant_id) {
-            return XeroToken::where('id', '=', $this->tenant_id)->first();
+            return XeroToken::where('tenant_id', '=', $this->tenant_id)->first();
         }
 
         return XeroToken::first();
@@ -156,7 +156,7 @@ class Xero
 
         $resultCode = $this->dopost(self::$tokenUrl, $params);
 
-        $this->storeToken($resultCode);
+        $this->storeToken($resultCode, ['tenant_id' => $token->tenant_id]);
 
         return $resultCode['access_token'];
     }
@@ -229,7 +229,7 @@ class Xero
         ];
 
         if ($this->tenant_id) {
-            $where = ['id' => $this->tenant_id];
+            $where = ['tenant_id' => $this->tenant_id];
         } elseif ($tenantData !== null) {
             $data  = array_merge($data, $tenantData);
             $where = ['tenant_id' => $data['tenant_id']];
