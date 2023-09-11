@@ -4,7 +4,7 @@ use Dcblogdev\Xero\Facades\Xero as XeroFacade;
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Xero;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->XeroMock = Mockery::mock(Xero::class);
@@ -106,7 +106,8 @@ test('can return getAccessToken when it has not expired ', function () {
     XeroToken::create([
         'id' => 0,
         'access_token' => '1234',
-        'expires_in' => now()->addMinutes(15),
+        'expires_in' => now()->addMinutes(25),
+        'updated_at' => strtotime('+1 day'),
         'scopes' => 'contacts'
     ]);
 

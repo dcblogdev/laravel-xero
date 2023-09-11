@@ -33,3 +33,16 @@ All notable changes to `Laravel Xero` will be documented in this file.
 ## Version 1.1.3
 
 - Update keep-alive for multi-tenant use, and storeToken where id when using tenant_id in the class
+
+## Version 1.1.4
+
+- Added support for Laravel 10
+
+## Version 1.1.5
+
+- applied fix for returning access token
+
+## Version 1.1.6
+
+- Update Xero.php expiry check to use the accessor instead of expired_in column
+- Fixed failing test for getting access token
