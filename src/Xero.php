@@ -194,9 +194,10 @@ class Xero
         $data    = $args[1] ?? [];
         $raw     = $args[2] ?? false;
         $accept  = $args[3] ?? 'application/json';
+        $headers = $args[4] ?? []; // Add a new line for custom headers
 
         if (in_array($function, $options)) {
-            return $this->guzzle($function, $path, $data, $raw, $accept);
+            return $this->guzzle($function, $path, $data, $raw, $accept, $headers);
         } else {
             //request verb is not in the $options array
             throw new RuntimeException($function.' is not a valid HTTP Verb');
@@ -248,11 +249,11 @@ class Xero
      * @param  bool  $raw
      * @return array
      */
-    protected function guzzle($type, $request, $data = [], $raw = false, $accept = 'application/json')
+    protected function guzzle($type, $request, $data = [], $raw = false, $accept = 'application/json', $headers = [])
     {
         try {
             $response = Http::withToken($this->getAccessToken())
-                ->withHeaders(['Xero-tenant-id' => $this->getTenantId()])
+                ->withHeaders(array_merge(['Xero-tenant-id' => $this->getTenantId()], $headers))
                 ->accept($accept)
                 ->$type(self::$baseUrl . $request, $data)
                 ->throw();
