@@ -39,7 +39,7 @@ class Invoices extends Xero
         return $result['body']['Invoices'][0];
     }
 
-    public function store(array $data)
+    public function store(array $data) 
     {
         $result = Xero::post('invoices', $data);
 
@@ -61,5 +61,5 @@ class Invoices extends Xero
         $result = Xero::get('invoices/'.$invoiceId.'/Attachments/'.$nameOrId, null, true);
 
         return $result['body'];
-    }
+    }    
 }
