@@ -135,9 +135,13 @@ class Xero
         if(config('xero.encrypt')) {
             try {
                 $access_token = Crypt::decryptString($token->access_token);
-                $refresh_token = Crypt::decryptString($token->refresh_token);
             } catch (DecryptException $e) {
                 $access_token = $token->access_token;
+            }
+            // Split them as a refresh token may not exist...
+            try {
+                $refresh_token = Crypt::decryptString($token->refresh_token);
+            } catch (DecryptException $e) {
                 $refresh_token = $token->refresh_token;
             }
             $token->access_token = $access_token;

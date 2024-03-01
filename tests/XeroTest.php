@@ -4,6 +4,8 @@ use Dcblogdev\Xero\Facades\Xero as XeroFacade;
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Xero;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -113,5 +115,37 @@ test('can return getAccessToken when it has not expired ', function () {
 
     $data = XeroFacade::getAccessToken();
 
+    expect($data)->toBe('1234');
+});
+
+test('can get tokens when not-encrypted but encryption is enabled', function () {
+    
+    Config::set('xero.encrypt', true);
+    
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => '1234',
+        'expires_in' => strtotime('+1 day'),
+        'scopes' => 'contacts'
+    ]);
+    
+    $data = XeroFacade::getAccessToken();
+    
+    expect($data)->toBe('1234');
+});
+
+test('can get tokens when encrypted', function () {
+    
+    Config::set('xero.encrypt', true);
+    
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => Crypt::encryptString('1234'),
+        'expires_in' => strtotime('+1 day'),
+        'scopes' => 'contacts'
+    ]);
+    
+    $data = XeroFacade::getAccessToken();
+    
     expect($data)->toBe('1234');
 });
