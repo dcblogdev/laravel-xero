@@ -2,7 +2,7 @@
 
 namespace Dcblogdev\Xero\Models;
 
-use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,12 +11,12 @@ class XeroToken extends Model
     protected $guarded = [];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute<Carbon, never>
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<DateTimeInterface, never>
      */
     protected function expires(): Attribute
     {
         return Attribute::get(
-            fn(): Carbon => $this->updated_at->addSeconds($this->expires_in)
+            fn(): DateTimeInterface => $this->updated_at->addSeconds($this->expires_in)
         );
     }
 }
