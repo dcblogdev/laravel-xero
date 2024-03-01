@@ -39,10 +39,27 @@ class Invoices extends Xero
         return $result['body']['Invoices'][0];
     }
 
-    public function store(array $data) 
+    public function store(array $data)
     {
         $result = Xero::post('invoices', $data);
 
         return $result['body']['Invoices'][0];
+    }
+    
+    public function attachments(string $invoiceId)
+    {
+        $result = Xero::get('invoices/'.$invoiceId.'/Attachments');
+
+        return $result['body']['Attachments'];
+    }
+    
+    public function attachment(string $invoiceId, string $attachmentId = null, string $fileName = null)
+    {
+        // Depending on the application we may want to get it by the FileName instead fo the AttachmentId
+        $nameOrId = $attachmentId ? $attachmentId : $fileName;
+        
+        $result = Xero::get('invoices/'.$invoiceId.'/Attachments/'.$nameOrId, null, true);
+
+        return $result['body'];
     }
 }
