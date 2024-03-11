@@ -296,6 +296,10 @@ class Xero
                 'authorization' => "Basic " . base64_encode(config('xero.clientId') . ":" . config('xero.clientSecret'))
             ])->asForm()->acceptJson()->post($url, $params);
 
+            if( $response->status((int) $response->status()) !== 200 ) {
+                throw new Exception($response->json()['error'] . ' - Try Refreshing Tokens, Error Code: ' . $response->status());
+            }
+            
             return $response->json();
         } catch (Exception $e) {
             return json_decode($e->getResponse()->getBody()->getContents(), true);
