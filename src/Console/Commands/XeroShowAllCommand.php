@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Dcblogdev\Xero\Models\XeroToken;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 
 class XeroShowAllCommand extends Command
 {
@@ -39,8 +41,21 @@ class XeroShowAllCommand extends Command
 
         if(config('xero.encrypt')) {
             $tokens->map(function($token) {
-                $token->access_token = decrypt($token->access_token);
-                $token->refresh_token = decrypt($token->refresh_token);
+                try {
+                    $access_token = Crypt::decryptString($token->access_token);
+                } catch (DecryptException $e) {
+                    $access_token = $token->access_token;
+                    $refresh_token = $token->refresh_token;
+                }
+                // Split them as a refresh token may not exist...
+                try {
+                    $refresh_token = Crypt::decryptString($token->refresh_token);
+                } catch (DecryptException $e) {
+                    $refresh_token = $token->refresh_token;
+                }
+                
+                $token->access_token = $access_token;
+                $token->refresh_token = $refresh_token;
                 return $token;
             });
         }
