@@ -132,7 +132,7 @@ class Xero
             $token = XeroToken::first();
         }
 
-        if(config('xero.encrypt')) {
+        if($token && config('xero.encrypt')) {
             try {
                 $access_token = Crypt::decryptString($token->access_token);
             } catch (DecryptException $e) {
