@@ -2,7 +2,7 @@
 
 namespace Dcblogdev\Xero\Resources;
 
-use Dcblogdev\Xero\Facades\Xero;
+use Dcblogdev\Xero\Xero;
 
 class Webhooks extends Xero
 {

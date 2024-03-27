@@ -2,7 +2,7 @@
 
 namespace Dcblogdev\Xero\Resources;
 
-use Dcblogdev\Xero\Facades\Xero;
+use Dcblogdev\Xero\Xero;
 
 class Invoices extends Xero
 {
@@ -13,35 +13,35 @@ class Invoices extends Xero
             'where' => $where
         ]);
 
-        $result = Xero::get('invoices?'.$params);
+        $result = $this->get('invoices?'.$params);
 
         return $result['body']['Invoices'];
     }
 
     public function find(string $contactId)
     {
-        $result = Xero::get('invoices/'.$contactId);
+        $result = $this->get('invoices/'.$contactId);
 
         return $result['body']['Invoices'][0];
     }
 
     public function onlineUrl(string $invoiceId)
     {
-        $result = Xero::get('invoices/'.$invoiceId.'/OnlineInvoice');
+        $result = $this->get('invoices/'.$invoiceId.'/OnlineInvoice');
 
         return $result['body']['OnlineInvoices'][0]['OnlineInvoiceUrl'];
     }
 
     public function update(string $invoiceId, array $data)
     {
-        $result = Xero::post('invoices/'.$invoiceId, $data);
+        $result = $this->post('invoices/'.$invoiceId, $data);
 
         return $result['body']['Invoices'][0];
     }
 
-    public function store(array $data) 
+    public function store(array $data)
     {
-        $result = Xero::post('invoices', $data);
+        $result = $this->post('invoices', $data);
 
         return $result['body']['Invoices'][0];
     }
