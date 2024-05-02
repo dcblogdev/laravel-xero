@@ -12,9 +12,10 @@ class XeroServiceProvider extends ServiceProvider
     /**
      * Perform post-registration booting of services.
      *
+     * @param Router $router
      * @return void
      */
-    public function boot(Router $router)
+    public function boot(Router $router): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->registerCommands();
@@ -22,7 +23,7 @@ class XeroServiceProvider extends ServiceProvider
         $this->configurePublishing();
     }
 
-    public function registerCommands()
+    public function registerCommands(): void
     {
         if (! $this->app->runningInConsole()) {
             return;
@@ -33,13 +34,13 @@ class XeroServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function registerMiddleware($router)
+    public function registerMiddleware($router): void
     {
         //add middleware
         $router->aliasMiddleware('XeroAuthenticated', XeroAuthenticated::class);
     }
 
-    public function configurePublishing()
+    public function configurePublishing(): void
     {
         if (! $this->app->runningInConsole()) {
             return;
@@ -63,7 +64,7 @@ class XeroServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/xero.php', 'xero');
 
@@ -78,7 +79,7 @@ class XeroServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['xero'];
     }

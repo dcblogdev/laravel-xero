@@ -6,9 +6,9 @@ use Dcblogdev\Xero\Xero;
 
 class Webhooks extends Xero
 {
-    protected $payload;
+    protected string $payload;
 
-    public function validate()
+    public function validate(): bool
     {
         $this->payload = file_get_contents("php://input");
         $signature = $_SERVER['HTTP_X_XERO_SIGNATURE'];
@@ -16,12 +16,12 @@ class Webhooks extends Xero
         return hash_equals($this->getSignature(), $signature);
     }
 
-    public function getSignature()
+    public function getSignature(): string
     {
         return base64_encode(hash_hmac('sha256', $this->payload, config('xero.webhookKey'), true));
     }
 
-    public function getEvents()
+    public function getEvents(): array
     {
         $this->validate();
 
@@ -29,5 +29,4 @@ class Webhooks extends Xero
 
         return $payload->events;
     }
-
 }

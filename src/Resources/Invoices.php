@@ -6,60 +6,60 @@ use Dcblogdev\Xero\Xero;
 
 class Invoices extends Xero
 {
-    public function get(int $page = null, string $where = null)
+    public function get(int $page = 1, string $where = ''): array
     {
         $params = http_build_query([
             'page' => $page,
             'where' => $where
         ]);
 
-        $result = $this->get('invoices?'.$params);
+        $result = parent::get('invoices?'.$params);
 
         return $result['body']['Invoices'];
     }
 
-    public function find(string $contactId)
+    public function find(string $contactId): array
     {
-        $result = $this->get('invoices/'.$contactId);
+        $result = parent::get('invoices/'.$contactId);
 
         return $result['body']['Invoices'][0];
     }
 
-    public function onlineUrl(string $invoiceId)
+    public function onlineUrl(string $invoiceId): string
     {
-        $result = $this->get('invoices/'.$invoiceId.'/OnlineInvoice');
+        $result = parent::get('invoices/'.$invoiceId.'/OnlineInvoice');
 
         return $result['body']['OnlineInvoices'][0]['OnlineInvoiceUrl'];
     }
 
-    public function update(string $invoiceId, array $data)
+    public function update(string $invoiceId, array $data): array
     {
-        $result = $this->post('invoices/'.$invoiceId, $data);
+        $result = parent::post('invoices/'.$invoiceId, $data);
 
         return $result['body']['Invoices'][0];
     }
 
-    public function store(array $data)
+    public function store(array $data): array
     {
-        $result = $this->post('invoices', $data);
+        $result = parent::post('invoices', $data);
 
         return $result['body']['Invoices'][0];
     }
     
-    public function attachments(string $invoiceId)
+    public function attachments(string $invoiceId): array
     {
-        $result = Xero::get('invoices/'.$invoiceId.'/Attachments');
+        $result = parent::get('invoices/'.$invoiceId.'/Attachments');
 
         return $result['body']['Attachments'];
     }
     
-    public function attachment(string $invoiceId, string $attachmentId = null, string $fileName = null)
+    public function attachment(string $invoiceId, string $attachmentId = null, string $fileName = null): string
     {
         // Depending on the application we may want to get it by the FileName instead fo the AttachmentId
         $nameOrId = $attachmentId ? $attachmentId : $fileName;
         
-        $result = Xero::get('invoices/'.$invoiceId.'/Attachments/'.$nameOrId, null, true);
+        $result = parent::get('invoices/'.$invoiceId.'/Attachments/'.$nameOrId);
 
         return $result['body'];
-    }    
+    }
 }

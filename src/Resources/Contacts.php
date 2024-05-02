@@ -6,33 +6,33 @@ use Dcblogdev\Xero\Xero;
 
 class Contacts extends Xero
 {
-    public function get(int $page = null, string $where = null)
+    public function get(int $page = 1, string $where = ''): array
     {
         $params = http_build_query([
             'page' => $page,
             'where' => $where
         ]);
 
-        $result = $this->get('contacts?'.$params);
+        $result = parent::get('contacts?'.$params);
 
         return $result['body']['Contacts'];
     }
 
-    public function find(string $contactId)
+    public function find(string $contactId): array
     {
-        $result = $this->get('contacts/'.$contactId);
+        $result = parent::get('contacts/'.$contactId);
 
         return $result['body']['Contacts'][0];
     }
 
-    public function update(string $contactId, array $data)
+    public function update(string $contactId, array $data): array
     {
         $result = $this->post('contacts/'.$contactId, $data);
 
         return $result['body']['Contacts'][0];
     }
 
-    public function store(array $data)
+    public function store(array $data): array
     {
         $result = $this->post('contacts', $data);
 

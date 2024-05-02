@@ -39,7 +39,7 @@ class XeroShowAllCommand extends Command
         // Fetch all access tokens
         $tokens = XeroToken::select($dataToDisplay)->get();
 
-        if(config('xero.encrypt')) {
+        if (config('xero.encrypt')) {
             $tokens->map(function($token) {
                 try {
                     $access_token = Crypt::decryptString($token->access_token);
@@ -47,6 +47,7 @@ class XeroShowAllCommand extends Command
                     $access_token = $token->access_token;
                     $refresh_token = $token->refresh_token;
                 }
+
                 // Split them as a refresh token may not exist...
                 try {
                     $refresh_token = Crypt::decryptString($token->refresh_token);
