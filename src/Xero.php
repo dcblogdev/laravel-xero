@@ -293,8 +293,16 @@ class Xero
      * @return array
      * @throws Exception
      */
-    protected function guzzle(string $type, string $request, array $data = [], bool $raw = false, $accept = 'application/json', $headers = []): array
+    protected function guzzle(string $type, string $request, array $data = [], bool $raw = false, string $accept = 'application/json', array $headers = []): array
     {
+        if ($data === []) {
+            $data = null;
+        }
+
+        //contacts?where=ContactID==Guid("74ea95ea-6e1e-435d-9c30-0dff8ae1bd80
+
+        //dd([$request]);
+
         try {
             $response = Http::withToken($this->getAccessToken())
                 ->withHeaders(array_merge(['Xero-tenant-id' => $this->getTenantId()], $headers))
@@ -308,7 +316,7 @@ class Xero
             ];
         } catch (RequestException $e) {
             $response = json_decode($e->response->body());
-            throw new Exception($response->Detail);
+            throw new Exception($response->Detail ?? "Type: {$response->Type} Message: {$response->Message} Error Number: {$response->ErrorNumber}");
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -337,5 +345,16 @@ class Xero
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    public function formatQueryStrings(array $params): string
+    {
+        $queryString = '';
+
+        foreach ($params as $key => $value) {
+            $queryString .= "$key=$value&";
+        }
+
+        return rtrim($queryString, '&');
     }
 }

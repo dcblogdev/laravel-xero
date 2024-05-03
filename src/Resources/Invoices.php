@@ -2,53 +2,65 @@
 
 namespace Dcblogdev\Xero\Resources;
 
+use Dcblogdev\Xero\Enums\FilterOptions;
 use Dcblogdev\Xero\Xero;
+use InvalidArgumentException;
 
 class Invoices extends Xero
 {
-    public function get(int $page = 1, string $where = ''): array
-    {
-        $params = http_build_query([
-            'page' => $page,
-            'where' => $where
-        ]);
+    protected array $queryString = [];
 
-        $result = parent::get('invoices?'.$params);
+    public function filter($key, $value): static
+    {
+        if (! FilterOptions::isValid($key)) {
+            throw new InvalidArgumentException("Filter option '$key' is not valid.");
+        }
+
+        $this->queryString[$key] = $value;
+
+        return $this;
+    }
+
+    public function get(): array
+    {
+        $queryString = $this->formatQueryStrings($this->queryString);
+
+        $result = parent::get('Invoices?'.$queryString);
 
         return $result['body']['Invoices'];
     }
 
-    public function find(string $contactId): array
+    public function find(string $invoiceId): array
     {
-        $result = parent::get('invoices/'.$contactId);
+        $result = parent::get('Invoices/'.$invoiceId);
 
         return $result['body']['Invoices'][0];
     }
 
     public function onlineUrl(string $invoiceId): string
     {
-        $result = parent::get('invoices/'.$invoiceId.'/OnlineInvoice');
+        $result = parent::get('Invoices/'.$invoiceId.'/OnlineInvoice');
 
         return $result['body']['OnlineInvoices'][0]['OnlineInvoiceUrl'];
     }
 
     public function update(string $invoiceId, array $data): array
     {
-        $result = parent::post('invoices/'.$invoiceId, $data);
+        $result = parent::post('Invoices/'.$invoiceId, $data);
 
         return $result['body']['Invoices'][0];
     }
 
     public function store(array $data): array
     {
-        $result = parent::post('invoices', $data);
+        $result = parent::post('Invoices', $data);
 
         return $result['body']['Invoices'][0];
     }
     
     public function attachments(string $invoiceId): array
     {
-        $result = parent::get('invoices/'.$invoiceId.'/Attachments');
+        $result = parent::get('Invoices/'.$invoiceId.'/Attachments');
 
         return $result['body']['Attachments'];
     }
@@ -58,7 +70,7 @@ class Invoices extends Xero
         // Depending on the application we may want to get it by the FileName instead fo the AttachmentId
         $nameOrId = $attachmentId ? $attachmentId : $fileName;
         
-        $result = parent::get('invoices/'.$invoiceId.'/Attachments/'.$nameOrId);
+        $result = parent::get('Invoices/'.$invoiceId.'/Attachments/'.$nameOrId);
 
         return $result['body'];
     }
