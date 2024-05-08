@@ -31,4 +31,8 @@ class XeroToken extends Model
             fn(): DateTimeInterface => $this->updated_at->addSeconds($this->expires_in)
         );
     }
+
+    protected $casts = [
+        'expires_in' => 'integer',
+    ];
 }
