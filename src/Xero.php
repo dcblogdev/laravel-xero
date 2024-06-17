@@ -4,6 +4,7 @@ namespace Dcblogdev\Xero;
 
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Resources\Contacts;
+use Dcblogdev\Xero\Resources\CreditNotes;
 use Dcblogdev\Xero\Resources\Invoices;
 use Dcblogdev\Xero\Resources\Webhooks;
 use Exception;
@@ -40,6 +41,11 @@ class Xero
     public function contacts(): Contacts
     {
         return new Contacts();
+    }
+
+    public function creditnotes(): CreditNotes
+    {
+        return new CreditNotes();
     }
 
     public function invoices(): Invoices
