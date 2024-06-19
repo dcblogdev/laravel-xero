@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Dcblogdev\Xero\Console\Commands;
 
 use Illuminate\Console\Command;
 use Dcblogdev\Xero\Models\XeroToken;
@@ -45,7 +45,6 @@ class XeroShowAllCommand extends Command
                     $access_token = Crypt::decryptString($token->access_token);
                 } catch (DecryptException $e) {
                     $access_token = $token->access_token;
-                    $refresh_token = $token->refresh_token;
                 }
 
                 // Split them as a refresh token may not exist...

@@ -4,18 +4,20 @@ namespace Dcblogdev\Xero;
 
 use Closure;
 use Dcblogdev\Xero\Facades\Xero;
+use Exception;
+use \Illuminate\Http\Request;
 
 class XeroAuthenticated
 {
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function handle($request, Closure $next): mixed
+    public function handle(Request $request, Closure $next)
     {
         if (! Xero::isConnected()) {
             return Xero::connect();

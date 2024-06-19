@@ -10,7 +10,7 @@ class Invoices extends Xero
 {
     protected array $queryString = [];
 
-    public function filter($key, $value): static
+    public function filter($key, $value): Invoices
     {
         if (! FilterOptions::isValid($key)) {
             throw new InvalidArgumentException("Filter option '$key' is not valid.");
