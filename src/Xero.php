@@ -30,7 +30,7 @@ class Xero
     protected static string $connectionUrl = 'https://api.xero.com/connections';
     protected static string $tokenUrl  = 'https://identity.xero.com/connect/token';
     protected static string $revokeUrl = 'https://identity.xero.com/connect/revocation';
-    protected mixed           $tenant_id = 0;
+    protected string        $tenant_id = '';
 
     public function setTenantId(string $tenant_id): void
     {
@@ -81,7 +81,7 @@ class Xero
      * @return RedirectResponse|Application|Redirector
      * @throws Exception
      */
-    public function connect(): RedirectResponse|Application|Redirector
+    public function connect()
     {
         //when no code param redirect to Microsoft
         if (request()->has('code')) {
@@ -136,7 +136,7 @@ class Xero
         return redirect()->away($url);
     }
 
-    public function getTokenData(): XeroToken|null
+    public function getTokenData(): ?XeroToken
     {
         if ($this->tenant_id) {
             $token = XeroToken::where('tenant_id', '=', $this->tenant_id)->first();
@@ -251,6 +251,8 @@ class Xero
         if (! $this->isConnected() && $redirectWhenNotConnected === true) {
             return redirect()->away(config('xero.redirectUri'));
         }
+
+        return false;
     }
 
     /**
@@ -299,10 +301,6 @@ class Xero
             $data = null;
         }
 
-        //contacts?where=ContactID==Guid("74ea95ea-6e1e-435d-9c30-0dff8ae1bd80
-
-        //dd([$request]);
-
         try {
             $response = Http::withToken($this->getAccessToken())
                 ->withHeaders(array_merge(['Xero-tenant-id' => $this->getTenantId()], $headers))
@@ -316,7 +314,7 @@ class Xero
             ];
         } catch (RequestException $e) {
             $response = json_decode($e->response->body());
-            throw new Exception($response->Detail ?? "Type: {$response->Type} Message: {$response->Message} Error Number: {$response->ErrorNumber}");
+            throw new Exception($response->Detail ?? "Type: $response->Type Message: $response->Message Error Number: $response->ErrorNumber");
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -335,10 +333,6 @@ class Xero
                 ->asForm()
                 ->acceptJson()
                 ->post($url, $params);
-
-            //if ($response->status() !== 200 ) {
-                //throw new Exception($response->json()['error'] . ' - Try Refreshing Tokens, Error Code: ' . $response->status());
-            //}
 
             return $response->json();
 
