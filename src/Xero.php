@@ -2,6 +2,7 @@
 
 namespace Dcblogdev\Xero;
 
+use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\CreditNotes;
@@ -192,7 +193,7 @@ class Xero
     /**
      * @throws Exception
      */
-    public function renewExpiringToken($token)
+    public function renewExpiringToken(XeroToken $token, tokenExpiredAction $tokenExpiredAction): string
     {
         $params = [
             'grant_type'    => 'refresh_token',
@@ -201,6 +202,8 @@ class Xero
         ];
 
         $result = $this->sendPost(self::$tokenUrl, $params);
+
+        $tokenExpiredAction->handle($result, $token);
 
         $this->storeToken($result, ['tenant_id' => $token->tenant_id]);
 
@@ -332,7 +335,6 @@ class Xero
     protected static function sendPost(string $url, array $params)
     {
         try {
-
             $response = Http::withHeaders([
                 'authorization' => "Basic " . base64_encode(config('xero.clientId') . ":" . config('xero.clientSecret'))
             ])
