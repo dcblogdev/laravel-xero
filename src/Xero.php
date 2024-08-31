@@ -193,7 +193,7 @@ class Xero
     /**
      * @throws Exception
      */
-    public function renewExpiringToken(XeroToken $token, tokenExpiredAction $tokenExpiredAction): string
+    public function renewExpiringToken(XeroToken $token): string
     {
         $params = [
             'grant_type'    => 'refresh_token',
@@ -203,7 +203,7 @@ class Xero
 
         $result = $this->sendPost(self::$tokenUrl, $params);
 
-        $tokenExpiredAction->handle($result, $token);
+        app(tokenExpiredAction::class)($result, $token);
 
         $this->storeToken($result, ['tenant_id' => $token->tenant_id]);
 

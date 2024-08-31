@@ -12,7 +12,7 @@ class tokenExpiredAction
     /**
      * @throws Exception
      */
-    public function handle(array $result, XeroToken $token): ?RedirectResponse
+    public function __invoke(array $result, XeroToken $token): ?RedirectResponse
     {
         if (isset($result['error']) && $result['error'] === 'invalid_grant') {
             $token->delete();
@@ -20,7 +20,7 @@ class tokenExpiredAction
             if (app()->runningInConsole()) {
                 throw new Exception('Xero token has expired, please re-authenticate.');
             } else {
-                throw new XeroTokenExpiredException('Xero token has expired, please re-authenticate.');
+                return redirect()->away(config('xero.redirectUri'));
             }
         }
 
