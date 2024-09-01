@@ -2,8 +2,8 @@
 
 namespace Dcblogdev\Xero\Console\Commands;
 
-use Illuminate\Console\Command;
 use Dcblogdev\Xero\Models\XeroToken;
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 
@@ -29,7 +29,7 @@ class XeroShowAllCommand extends Command
         $this->line('All XERO Tokens in storage');
         $this->newLine();
 
-        $dataToDisplay  = [
+        $dataToDisplay = [
             'id',
             'tenant_name',
             'tenant_id',
@@ -40,7 +40,7 @@ class XeroShowAllCommand extends Command
         $tokens = XeroToken::select($dataToDisplay)->get();
 
         if (config('xero.encrypt')) {
-            $tokens->map(function($token) {
+            $tokens->map(function ($token) {
                 try {
                     $access_token = Crypt::decryptString($token->access_token);
                 } catch (DecryptException $e) {
@@ -53,9 +53,10 @@ class XeroShowAllCommand extends Command
                 } catch (DecryptException $e) {
                     $refresh_token = $token->refresh_token;
                 }
-                
+
                 $token->access_token = $access_token;
                 $token->refresh_token = $refresh_token;
+
                 return $token;
             });
         }

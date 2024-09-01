@@ -30,6 +30,7 @@
     "autoload": {
         "psr-4": {
             "Dcblogdev\\Xero\\": "src/",
+            "Dcblogdev\\Xero\\database\\factories\\": "database/factories/",
             "Dcblogdev\\Xero\\Tests\\": "tests"
         }
     },

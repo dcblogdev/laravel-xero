@@ -2,7 +2,8 @@
 
 namespace Dcblogdev\Xero\Enums;
 
-enum FilterOptions: string {
+enum FilterOptions: string
+{
     case IDS = 'ids';
     case INCLUDEARCHIVED = 'includeArchived';
     case ORDER = 'order';
@@ -13,7 +14,7 @@ enum FilterOptions: string {
 
     public static function isValid(string $value): bool
     {
-        $validValues = array_map(fn($case) => $case->value, self::cases());
+        $validValues = array_map(fn ($case) => $case->value, self::cases());
 
         return in_array($value, $validValues);
     }

@@ -5,16 +5,15 @@ namespace Dcblogdev\Xero;
 use Closure;
 use Dcblogdev\Xero\Facades\Xero;
 use Exception;
-use \Illuminate\Http\Request;
+use Illuminate\Http\Request;
 
 class XeroAuthenticated
 {
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
      * @return mixed
+     *
      * @throws Exception
      */
     public function handle(Request $request, Closure $next)

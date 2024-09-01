@@ -10,7 +10,7 @@ class Webhooks extends Xero
 
     public function validate(): bool
     {
-        $this->payload = file_get_contents("php://input");
+        $this->payload = file_get_contents('php://input');
         $signature = $_SERVER['HTTP_X_XERO_SIGNATURE'];
 
         return hash_equals($this->getSignature(), $signature);

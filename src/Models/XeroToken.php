@@ -3,7 +3,9 @@
 namespace Dcblogdev\Xero\Models;
 
 use DateTimeInterface;
+use Dcblogdev\Xero\database\factories\TokenFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -20,7 +22,14 @@ use Illuminate\Support\Carbon;
  */
 class XeroToken extends Model
 {
+    use HasFactory;
+
     protected $guarded = [];
+
+    protected static function newFactory(): TokenFactory
+    {
+        return TokenFactory::new();
+    }
 
     /**
      * @return Attribute<Carbon, never>
@@ -28,7 +37,7 @@ class XeroToken extends Model
     protected function expires(): Attribute
     {
         return Attribute::get(
-            fn(): DateTimeInterface => $this->updated_at->addSeconds((int)$this->expires_in)
+            fn (): DateTimeInterface => $this->updated_at->addSeconds((int) $this->expires_in)
         );
     }
 
