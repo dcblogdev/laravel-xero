@@ -10,14 +10,13 @@ use Illuminate\Support\Facades\Facade;
  * @method static array post (string $endpoint, array $params = [])
  * @method static array patch (string $endpoint, array $params = [])
  * @method static array delete (string $endpoint, array $params = [])
+ *
  * @mixin \Dcblogdev\Xero\Xero
  */
 class Xero extends Facade
 {
     /**
      * Get the registered name of the component.
-     *
-     * @return string
      */
     protected static function getFacadeAccessor(): string
     {

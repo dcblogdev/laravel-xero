@@ -2,7 +2,6 @@
 
 namespace Dcblogdev\Xero\Actions;
 
-use Dcblogdev\Xero\Exceptions\XeroTokenExpiredException;
 use Dcblogdev\Xero\Models\XeroToken;
 use Exception;
 use Illuminate\Http\RedirectResponse;

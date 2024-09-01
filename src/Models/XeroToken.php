@@ -37,7 +37,7 @@ class XeroToken extends Model
     protected function expires(): Attribute
     {
         return Attribute::get(
-            fn(): DateTimeInterface => $this->updated_at->addSeconds((int)$this->expires_in)
+            fn (): DateTimeInterface => $this->updated_at->addSeconds((int) $this->expires_in)
         );
     }
 

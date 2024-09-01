@@ -5,15 +5,11 @@ namespace Dcblogdev\Xero;
 use Dcblogdev\Xero\Console\Commands\XeroKeepAliveCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Dcblogdev\Xero\XeroAuthenticated;
 
 class XeroServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
-     *
-     * @param Router $router
-     * @return void
      */
     public function boot(Router $router): void
     {
@@ -58,11 +54,8 @@ class XeroServiceProvider extends ServiceProvider
         ], 'migrations');
     }
 
-
     /**
      * Register any package services.
-     *
-     * @return void
      */
     public function register(): void
     {
@@ -76,8 +69,6 @@ class XeroServiceProvider extends ServiceProvider
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
     public function provides(): array
     {

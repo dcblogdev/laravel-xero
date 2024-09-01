@@ -2,9 +2,10 @@
 
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
+
 use function Pest\Laravel\assertDatabaseCount;
 
-test('token refresh throws exception when expired and a refresh is attempted over cli', function(){
+test('token refresh throws exception when expired and a refresh is attempted over cli', function () {
 
     $token = XeroToken::factory()->create();
 
@@ -16,7 +17,7 @@ test('token refresh throws exception when expired and a refresh is attempted ove
 
 })->throws(Exception::class, 'Xero token has expired, please re-authenticate.');
 
-test('token refresh does not throw an exception and token is not deleted', function(){
+test('token refresh does not throw an exception and token is not deleted', function () {
 
     $token = XeroToken::factory()->create();
 
