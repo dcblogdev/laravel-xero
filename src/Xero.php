@@ -2,6 +2,8 @@
 
 namespace Dcblogdev\Xero;
 
+use Dcblogdev\Xero\Actions\formatQueryStringsAction;
+use Dcblogdev\Xero\Actions\StoreTokenAction;
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Resources\Contacts;
@@ -128,7 +130,7 @@ class Xero
                             'updated_date_utc' => $tenant['updatedDateUtc'],
                         ];
 
-                        $this->storeToken($result, $tenantData);
+                        app(StoreTokenAction::class)($result, $tenantData, $tenant['tenantId']);
                     }
                 } catch (Exception $e) {
                     throw new Exception('Error getting tenant: '.$e->getMessage());
@@ -211,8 +213,7 @@ class Xero
         $result = $this->sendPost(self::$tokenUrl, $params);
 
         app(tokenExpiredAction::class)($result, $token);
-
-        $this->storeToken($result, ['tenant_id' => $token->tenant_id]);
+        app(StoreTokenAction::class)($result, ['tenant_id' => $token->tenant_id], $this->tenant_id);
 
         return $result['access_token'];
     }
@@ -274,32 +275,6 @@ class Xero
     }
 
     /**
-     * Store token
-     */
-    protected function storeToken(array $token, array $tenantData = []): object
-    {
-        $data = [
-            'id_token' => $token['id_token'],
-            'access_token' => config('xero.encrypt') ? Crypt::encryptString($token['access_token']) : $token['access_token'],
-            'expires_in' => $token['expires_in'],
-            'token_type' => $token['token_type'],
-            'refresh_token' => config('xero.encrypt') ? Crypt::encryptString($token['refresh_token']) : $token['refresh_token'],
-            'scopes' => $token['scope'],
-        ];
-
-        if ($this->tenant_id) {
-            $where = ['tenant_id' => $this->tenant_id];
-        } elseif ($tenantData !== []) {
-            $data = array_merge($data, $tenantData);
-            $where = ['tenant_id' => $data['tenant_id']];
-        } else {
-            $where = ['id' => 1];
-        }
-
-        return XeroToken::updateOrCreate($where, $data);
-    }
-
-    /**
      * run guzzle to process requested url
      *
      * @throws Exception
@@ -351,12 +326,6 @@ class Xero
 
     public function formatQueryStrings(array $params): string
     {
-        $queryString = '';
-
-        foreach ($params as $key => $value) {
-            $queryString .= "$key=$value&";
-        }
-
-        return rtrim($queryString, '&');
+        return app(formatQueryStringsAction::class)($params);
     }
 }
