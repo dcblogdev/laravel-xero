@@ -11,6 +11,7 @@ enum FilterOptions: string
     case SEARCHTERM = 'searchTerm';
     case SUMMARYONLY = 'summaryOnly';
     case WHERE = 'where';
+    case STATUSES = 'Statuses';
 
     public static function isValid(string $value): bool
     {
