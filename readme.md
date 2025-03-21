@@ -270,7 +270,7 @@ Xero::contacts()->update($contactId, $data);
 # Invoices
 Xero provides a clean way of working with Xero invoices.
 
-To work with invoices first call ->invocies() followed by a method.
+To work with invoices first call `->invoices()` followed by a method.
 
 ```php
 Xero::invoices()
