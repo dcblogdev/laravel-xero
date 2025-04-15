@@ -66,6 +66,24 @@ class Xero
         return new Webhooks;
     }
 
+    public function isTokenValid(): bool
+    {
+        $token = $this->getTokenData();
+
+        if ($token === null) {
+            return false;
+        }
+
+        $now = now()->addMinutes(5);
+
+        if ($token->expires < $now) {
+            return false;
+        }
+
+        return true;
+    }
+
+
     public function isConnected(): bool
     {
         return ! ($this->getTokenData() === null);
