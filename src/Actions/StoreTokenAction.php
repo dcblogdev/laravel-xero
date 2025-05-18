@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Crypt;
 
 class StoreTokenAction
 {
-    public function __invoke(array $token, array $tenantData = [], string $tenantId = null): XeroToken
+    public function __invoke(array $token, array $tenantData = [], ?string $tenantId = null): XeroToken
     {
         $data = [
             'id_token' => $token['id_token'],
