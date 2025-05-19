@@ -23,9 +23,10 @@
         "orchestra/testbench": "^7.0|^10.3",
         "pestphp/pest": "^1.21|^v3.8.2",
         "pestphp/pest-plugin-laravel": "^v3.2.0",
-        "friendsofphp/php-cs-fixer": "^3.75",
+        "pestphp/pest-plugin-type-coverage": "^3.5.1",
         "larastan/larastan": "^3.4",
-        "mockery/mockery": "^1.6.12"
+        "mockery/mockery": "^1.6.12",
+        "laravel/pint": "^1.22.1"
     },
     "autoload": {
         "psr-4": {
@@ -37,6 +38,19 @@
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php"
+        ]
+    },
+    "scripts": {
+        "pint": "vendor/bin/pint",
+        "stan": "phpstan analyse",
+        "pest": "pest",
+        "pest-type-coverage": "pest --type-coverage",
+        "pest-coverage": "pest --parallel --coverage",
+        "check": [
+            "@pint",
+            "@stan",
+            "@pest-type-coverage",
+            "@pest-coverage"
         ]
     },
     "extra": {
