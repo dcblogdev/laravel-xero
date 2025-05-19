@@ -2,6 +2,9 @@
 
 namespace Dcblogdev\Xero;
 
+use DateInvalidTimeZoneException;
+use DateTime;
+use DateTimeZone;
 use Dcblogdev\Xero\Actions\formatQueryStringsAction;
 use Dcblogdev\Xero\Actions\StoreTokenAction;
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
@@ -18,6 +21,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -345,5 +349,31 @@ class Xero
     public function formatQueryStrings(array $params): string
     {
         return app(formatQueryStringsAction::class)($params);
+    }
+
+
+    /**
+     * Parse a date string into a formatted date.
+     *
+     * @param string $date
+     * @param string $format
+     * @return string
+     * @throws DateInvalidTimeZoneException if the input isn’t valid
+     * @throws \DateMalformedStringException
+     */
+    public function formatDate(string $date, string $format = 'Y-m-d H:i:s'): string
+    {
+        if (preg_match('#/Date\((\d+)([+-]\d{4})\)/#', $date, $m)) {
+            $timestamp = (int) $m[1] / 1000;
+            $offset = $m[2];
+            // Convert +0100 to +01:00
+            $tzOffset = substr($offset, 0, 3) . ':' . substr($offset, 3, 2);
+            $dt = new DateTime("@$timestamp");
+            $dt->setTimezone(new DateTimeZone($tzOffset));
+            return $dt->format($format);
+        }
+
+        $dt = new DateTime($date);
+        return $dt->format($format);
     }
 }
