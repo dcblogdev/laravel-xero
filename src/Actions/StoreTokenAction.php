@@ -21,6 +21,9 @@ class StoreTokenAction
         ];
 
         if ($tenantId) {
+            if ($tenantData !== []) {
+                $data = array_merge($data, $tenantData);
+            }
             $where = ['tenant_id' => $tenantId];
         } elseif ($tenantData !== []) {
             $data = array_merge($data, $tenantData);
