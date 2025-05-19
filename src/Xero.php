@@ -2,6 +2,9 @@
 
 namespace Dcblogdev\Xero;
 
+use DateInvalidTimeZoneException;
+use DateTime;
+use DateTimeZone;
 use Dcblogdev\Xero\Actions\formatQueryStringsAction;
 use Dcblogdev\Xero\Actions\StoreTokenAction;
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
@@ -86,7 +89,7 @@ class Xero
 
     public function isConnected(): bool
     {
-        return ! ($this->getTokenData() === null);
+        return !($this->getTokenData() === null);
     }
 
     public function disconnect(): void
@@ -95,7 +98,7 @@ class Xero
             $token = $this->getTokenData();
 
             Http::withHeaders([
-                'authorization' => 'Basic '.base64_encode(config('xero.clientId').':'.config('xero.clientSecret')),
+                'authorization' => 'Basic ' . base64_encode(config('xero.clientId') . ':' . config('xero.clientSecret')),
             ])
                 ->asForm()
                 ->post(self::$revokeUrl, [
@@ -104,7 +107,7 @@ class Xero
 
             $token->delete();
         } catch (Exception $e) {
-            throw new RuntimeException('error getting tenant: '.$e->getMessage());
+            throw new RuntimeException('error getting tenant: ' . $e->getMessage());
         }
     }
 
@@ -131,7 +134,7 @@ class Xero
 
                 try {
                     $response = Http::withHeaders([
-                        'Authorization' => 'Bearer '.$result['access_token'],
+                        'Authorization' => 'Bearer ' . $result['access_token'],
                     ])
                         ->acceptJson()
                         ->get(self::$connectionUrl)
@@ -151,7 +154,7 @@ class Xero
                         app(StoreTokenAction::class)($result, $tenantData, $tenant['tenantId']);
                     }
                 } catch (Exception $e) {
-                    throw new Exception('Error getting tenant: '.$e->getMessage());
+                    throw new Exception('Error getting tenant: ' . $e->getMessage());
                 }
 
                 return redirect(config('xero.landingUri'));
@@ -160,12 +163,12 @@ class Xero
             }
         }
 
-        $url = self::$authorizeUrl.'?'.http_build_query([
-            'response_type' => 'code',
-            'client_id' => config('xero.clientId'),
-            'redirect_uri' => config('xero.redirectUri'),
-            'scope' => config('xero.scopes'),
-        ]);
+        $url = self::$authorizeUrl . '?' . http_build_query([
+                'response_type' => 'code',
+                'client_id' => config('xero.clientId'),
+                'redirect_uri' => config('xero.redirectUri'),
+                'scope' => config('xero.scopes'),
+            ]);
 
         return redirect()->away($url);
     }
@@ -259,8 +262,8 @@ class Xero
     /**
      * __call catches all requests when no found method is requested
      *
-     * @param  string  $function  - the verb to execute
-     * @param  array  $args  - array of arguments
+     * @param string $function - the verb to execute
+     * @param array $args - array of arguments
      * @return array
      *
      * @throws Exception
@@ -278,14 +281,14 @@ class Xero
             return $this->guzzle($function, $path, $data, $raw, $accept, $headers);
         } else {
             //request verb is not in the $options array
-            throw new RuntimeException($function.' is not a valid HTTP Verb');
+            throw new RuntimeException($function . ' is not a valid HTTP Verb');
         }
     }
 
     protected function redirectIfNoToken(string $token, bool $redirectWhenNotConnected = true)
     {
         // Check if tokens exist otherwise run the oauth request
-        if (! $this->isConnected() && $redirectWhenNotConnected === true) {
+        if (!$this->isConnected() && $redirectWhenNotConnected === true) {
             return redirect()->away(config('xero.redirectUri'));
         }
 
@@ -307,7 +310,7 @@ class Xero
             $response = Http::withToken($this->getAccessToken())
                 ->withHeaders(array_merge(['Xero-tenant-id' => $this->getTenantId()], $headers))
                 ->accept($accept)
-                ->$type(self::$baseUrl.$request, $data)
+                ->$type(self::$baseUrl . $request, $data)
                 ->throw();
 
             return [
@@ -329,7 +332,7 @@ class Xero
     {
         try {
             $response = Http::withHeaders([
-                'authorization' => 'Basic '.base64_encode(config('xero.clientId').':'.config('xero.clientSecret')),
+                'authorization' => 'Basic ' . base64_encode(config('xero.clientId') . ':' . config('xero.clientSecret')),
             ])
                 ->asForm()
                 ->acceptJson()
@@ -345,5 +348,40 @@ class Xero
     public function formatQueryStrings(array $params): string
     {
         return app(formatQueryStringsAction::class)($params);
+    }
+
+
+    /**
+     * Parse a date string into a formatted date.
+     *
+     * @param string $date
+     * @param string $format
+     * @return string
+     * @throws DateInvalidTimeZoneException if the input isn’t valid
+     * @throws \DateMalformedStringException
+     */
+    public static function formatDate(string $date, string $format = 'Y-m-d H:i:s'): string
+    {
+        try {
+            // Match Microsoft JSON date format: /Date(1663257600000+0100)/
+            if (preg_match('#^/Date\((\d+)([+-]\d{4})\)/$#', $date, $matches)) {
+                $timestamp = (int)$matches[1] / 1000;
+                $offset = $matches[2];
+                $tzOffset = substr($offset, 0, 3) . ':' . substr($offset, 3);
+
+                $dt = new DateTime("@$timestamp");
+                $dt->setTimezone(new DateTimeZone($tzOffset));
+
+                return $dt->format($format);
+            }
+
+            // Fallback to default DateTime parsing
+            $dt = new DateTime($date);
+            return $dt->format($format);
+
+        } catch (\Throwable $e) {
+            // Invalid date input, return empty string instead of crashing
+            return '';
+        }
     }
 }

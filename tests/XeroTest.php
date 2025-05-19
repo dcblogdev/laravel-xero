@@ -149,3 +149,31 @@ test('can get tokens when encrypted', function () {
 
     expect($data)->toBe('1234');
 });
+
+test('formats Microsoft JSON date with timezone offset', function () {
+    $input = '/Date(1663257600000+0100)/';
+    $formatted = Xero::formatDate($input);
+
+    expect($formatted)->toBe('2022-09-15 17:00:00');
+});
+
+test('formats standard ISO 8601 date string', function () {
+    $input = '2023-05-19T14:00:00+00:00';
+    $formatted = Xero::formatDate($input);
+
+    expect($formatted)->toBe('2023-05-19 14:00:00');
+});
+
+test('returns empty string for invalid date input', function () {
+    $input = 'invalid-date-format';
+    $formatted = Xero::formatDate($input);
+
+    expect($formatted)->toBe('');
+});
+
+test('formats Microsoft JSON date with UTC offset', function () {
+    $input = '/Date(1663257600000+0000)/';
+    $formatted = Xero::formatDate($input);
+
+    expect($formatted)->toBe('2022-09-15 16:00:00');
+});
