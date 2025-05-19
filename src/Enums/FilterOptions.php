@@ -6,14 +6,14 @@ namespace Dcblogdev\Xero\Enums;
 
 enum FilterOptions: string
 {
-    case IDS = 'ids';
-    case INCLUDEARCHIVED = 'includeArchived';
-    case ORDER = 'order';
-    case PAGE = 'page';
-    case SEARCHTERM = 'searchTerm';
-    case SUMMARYONLY = 'summaryOnly';
-    case WHERE = 'where';
-    case STATUSES = 'Statuses';
+    case Ids = 'ids';
+    case IncludeArchived = 'includeArchived';
+    case Order = 'order';
+    case Page = 'page';
+    case SearchTerm = 'searchTerm';
+    case SummaryOnly = 'summaryOnly';
+    case Where = 'where';
+    case Statuses = 'Statuses';
 
     public static function isValid(string $value): bool
     {
