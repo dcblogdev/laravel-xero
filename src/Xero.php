@@ -361,7 +361,7 @@ class Xero
      * @throws DateInvalidTimeZoneException if the input isn’t valid
      * @throws \DateMalformedStringException
      */
-    public function formatDate(string $date, string $format = 'Y-m-d H:i:s'): string
+    public static function formatDate(string $date, string $format = 'Y-m-d H:i:s'): string
     {
         if (preg_match('#/Date\((\d+)([+-]\d{4})\)/#', $date, $m)) {
             $timestamp = (int) $m[1] / 1000;
