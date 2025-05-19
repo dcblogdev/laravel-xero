@@ -10,15 +10,12 @@ use Illuminate\Http\RedirectResponse;
 
 class tokenExpiredAction
 {
-    /**
-     * @throws Exception
-     */
     public function __invoke(array $result, XeroToken $token): ?RedirectResponse
     {
         if (isset($result['error']) && $result['error'] === 'invalid_grant') {
             $token->delete();
 
-            if (app()->runningInConsole()) {
+            if ($this->isRunningInConsole()) {
                 throw new Exception('Xero token has expired, please re-authenticate.');
             }
 
@@ -27,5 +24,13 @@ class tokenExpiredAction
         }
 
         return null;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function isRunningInConsole(): bool
+    {
+        return app()->runningInConsole();
     }
 }
