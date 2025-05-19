@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Dcblogdev\Xero\Facades\Xero;
 use Dcblogdev\Xero\Resources\CreditNotes;
 

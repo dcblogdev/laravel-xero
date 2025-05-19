@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Actions;
 
 class formatQueryStringsAction
@@ -12,6 +14,6 @@ class formatQueryStringsAction
             $queryString .= "$key=$value&";
         }
 
-        return rtrim($queryString, '&');
+        return mb_rtrim($queryString, '&');
     }
 }

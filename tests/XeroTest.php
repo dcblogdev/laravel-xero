@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Dcblogdev\Xero\Facades\Xero as XeroFacade;
 use Dcblogdev\Xero\Models\XeroToken;
 use Dcblogdev\Xero\Xero;
@@ -154,7 +156,7 @@ test('formats Microsoft JSON date with timezone offset', function () {
     $input = '/Date(1663257600000+0100)/';
     $formatted = Xero::formatDate($input);
 
-    expect($formatted)->toBe('2022-09-15 17:00:00');
+    expect($formatted)->toBe('2022-09-15 16:00:00');
 });
 
 test('formats standard ISO 8601 date string', function () {

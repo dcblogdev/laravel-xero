@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Dcblogdev\Xero\Enums\FilterOptions;
 
 use function PHPUnit\Framework\assertFalse;

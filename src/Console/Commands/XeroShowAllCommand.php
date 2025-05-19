@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Console\Commands;
 
 use Dcblogdev\Xero\Models\XeroToken;
@@ -23,7 +25,7 @@ class XeroShowAllCommand extends Command
      */
     protected $description = 'Run this command to show all tokens within the database';
 
-    public function handle()
+    public function handle(): void
     {
         $this->newLine();
         $this->line('All XERO Tokens in storage');
@@ -40,7 +42,7 @@ class XeroShowAllCommand extends Command
         $tokens = XeroToken::select($dataToDisplay)->get();
 
         if (config('xero.encrypt')) {
-            $tokens->map(function ($token) {
+            $tokens->map(function (XeroToken $token) {
                 try {
                     $access_token = Crypt::decryptString($token->access_token);
                 } catch (DecryptException $e) {

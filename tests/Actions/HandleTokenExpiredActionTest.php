@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
 

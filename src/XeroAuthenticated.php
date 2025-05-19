@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero;
 
 use Closure;
@@ -12,11 +14,10 @@ class XeroAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @return mixed
      *
      * @throws Exception
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (! Xero::isConnected()) {
             return Xero::connect();
