@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Resources;
 
 use Dcblogdev\Xero\Enums\FilterOptions;
@@ -10,7 +12,7 @@ class CreditNotes extends Xero
 {
     protected array $queryString = [];
 
-    public function filter($key, $value): static
+    public function filter(string $key, string|int $value): static
     {
         if (! FilterOptions::isValid($key)) {
             throw new InvalidArgumentException("Filter option '$key' is not valid.");

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Models;
 
 use DateTimeInterface;
@@ -26,6 +28,10 @@ class XeroToken extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'expires_in' => 'integer',
+    ];
+
     protected static function newFactory(): TokenFactory
     {
         return TokenFactory::new();
@@ -40,8 +46,4 @@ class XeroToken extends Model
             fn (): DateTimeInterface => $this->updated_at->addSeconds((int) $this->expires_in)
         );
     }
-
-    protected $casts = [
-        'expires_in' => 'integer',
-    ];
 }

@@ -13,19 +13,20 @@
     "keywords": ["Laravel", "Xero"],
     "require": {
         "illuminate/support": "5.5.x|5.6.x|5.7.x|5.8.x|6.x|7.x|8.x|9.x|10.x|11.x|12.x",
-        "league/oauth2-client": "^1.4|^2",
-        "guzzlehttp/guzzle": "6.x|7.x",
+        "league/oauth2-client": "^1.4|^2.8.1",
+        "guzzlehttp/guzzle": "6.x|^7.9.3",
         "ext-json": "*",
         "ext-fileinfo": "*",
         "ext-curl": "*"
     },
     "require-dev": {
-        "orchestra/testbench": "^7.0|^8.0",
-        "pestphp/pest": "^1.21|^2.0",
-        "pestphp/pest-plugin-laravel": "^1.1",
-        "friendsofphp/php-cs-fixer": "^3.9",
-        "larastan/larastan": "^2.0",
-        "mockery/mockery": "^1.6"
+        "orchestra/testbench": "^7.0|^10.3",
+        "pestphp/pest": "^1.21|^v3.8.2",
+        "pestphp/pest-plugin-laravel": "^v3.2.0",
+        "pestphp/pest-plugin-type-coverage": "^3.5.1",
+        "larastan/larastan": "^3.4",
+        "mockery/mockery": "^1.6.12",
+        "laravel/pint": "^1.22.1"
     },
     "autoload": {
         "psr-4": {
@@ -37,6 +38,19 @@
     "autoload-dev": {
         "classmap": [
             "tests/TestCase.php"
+        ]
+    },
+    "scripts": {
+        "pint": "vendor/bin/pint",
+        "stan": "phpstan analyse",
+        "pest": "pest",
+        "pest-type-coverage": "pest --type-coverage",
+        "pest-coverage": "pest --parallel --coverage",
+        "check": [
+            "@pint",
+            "@stan",
+            "@pest-type-coverage",
+            "@pest-coverage"
         ]
     },
     "extra": {

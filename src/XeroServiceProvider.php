@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero;
 
 use Dcblogdev\Xero\Console\Commands\XeroKeepAliveCommand;
@@ -30,9 +32,9 @@ class XeroServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function registerMiddleware($router): void
+    public function registerMiddleware(Router $router): void
     {
-        //add middleware
+        // add middleware
         $router->aliasMiddleware('XeroAuthenticated', XeroAuthenticated::class);
     }
 
@@ -62,7 +64,7 @@ class XeroServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/xero.php', 'xero');
 
         // Register the service the package provides.
-        $this->app->singleton('xero', function ($app) {
+        $this->app->singleton('xero', function () {
             return new Xero;
         });
     }

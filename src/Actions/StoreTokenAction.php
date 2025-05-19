@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Actions;
 
 use Dcblogdev\Xero\Models\XeroToken;

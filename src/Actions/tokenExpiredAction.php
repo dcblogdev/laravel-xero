@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Actions;
 
 use Dcblogdev\Xero\Models\XeroToken;
@@ -18,9 +20,10 @@ class tokenExpiredAction
 
             if (app()->runningInConsole()) {
                 throw new Exception('Xero token has expired, please re-authenticate.');
-            } else {
-                return redirect()->away(config('xero.redirectUri'));
             }
+
+            return redirect()->away(config('xero.redirectUri'));
+
         }
 
         return null;

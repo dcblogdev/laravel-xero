@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dcblogdev\Xero\Console\Commands;
 
 use Dcblogdev\Xero\Facades\Xero;
