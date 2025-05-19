@@ -151,10 +151,10 @@ test('can get tokens when encrypted', function () {
 });
 
 test('formats Microsoft JSON date with timezone offset', function () {
-    $input = '/Date(1663257600000+0100)/'; // 2022-09-15 01:00:00 +01:00
+    $input = '/Date(1663257600000+0100)/';
     $formatted = Xero::formatDate($input);
 
-    expect($formatted)->toBe('2022-09-15 01:00:00');
+    expect($formatted)->toBe('2022-09-15 17:00:00');
 });
 
 test('formats standard ISO 8601 date string', function () {
@@ -172,8 +172,8 @@ test('returns empty string for invalid date input', function () {
 });
 
 test('formats Microsoft JSON date with UTC offset', function () {
-    $input = '/Date(1663257600000+0000)/'; // 2022-09-15 00:00:00 UTC
+    $input = '/Date(1663257600000+0000)/';
     $formatted = Xero::formatDate($input);
 
-    expect($formatted)->toBe('2022-09-15 00:00:00');
+    expect($formatted)->toBe('2022-09-15 16:00:00');
 });
