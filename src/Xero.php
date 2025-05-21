@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Dcblogdev\Xero;
 
-use DateTime;
-use DateTimeImmutable;
-use DateTimeZone;
-use Dcblogdev\Xero\Actions\formatQueryStringsAction;
 use Dcblogdev\Xero\Actions\StoreTokenAction;
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
@@ -15,6 +11,7 @@ use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\CreditNotes;
 use Dcblogdev\Xero\Resources\Invoices;
 use Dcblogdev\Xero\Resources\Webhooks;
+use Dcblogdev\Xero\Traits\XeroHelpersTrait;
 use Exception;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Foundation\Application;
@@ -35,6 +32,8 @@ use Throwable;
  */
 class Xero
 {
+    use XeroHelpersTrait;
+
     protected static string $baseUrl = 'https://api.xero.com/api.xro/2.0/';
 
     protected static string $authorizeUrl = 'https://login.xero.com/identity/connect/authorize';
@@ -72,34 +71,6 @@ class Xero
         throw new RuntimeException($function.' is not a valid HTTP Verb');
     }
 
-    /**
-     * Parse a date string into a formatted date.
-     */
-    public static function formatDate(string $date, string $format = 'Y-m-d H:i:s'): string
-    {
-        try {
-            // Match a Microsoft JSON date format: /Date(1663257600000+0100)/
-            if (preg_match('#^/Date\((\d+)([+-]\d{4})\)/$#', $date, $matches)) {
-                $timestamp = (int) $matches[1] / 1000;
-                $offset = $matches[2];
-                $tzOffset = mb_substr($offset, 0, 3).':'.mb_substr($offset, 3);
-
-                $dt = new DateTimeImmutable("@$timestamp");
-                $dt->setTimezone(new DateTimeZone($tzOffset));
-
-                return $dt->format($format);
-            }
-
-            // Fallback to default DateTime parsing
-            $dt = new DateTimeImmutable($date);
-
-            return $dt->format($format);
-
-        } catch (Throwable $e) {
-            // Invalid date input, return empty string instead of crashing
-            return '';
-        }
-    }
 
     public function setTenantId(string $tenant_id): void
     {
@@ -315,10 +286,6 @@ class Xero
         return $token->tenant_name;
     }
 
-    public function formatQueryStrings(array $params): string
-    {
-        return app(formatQueryStringsAction::class)($params);
-    }
 
     /**
      * @throws Exception
@@ -351,7 +318,7 @@ class Xero
     }
 
     /**
-     * run guzzle to process requested url
+     * run Guzzle to process the requested url
      *
      * @throws Exception
      */
