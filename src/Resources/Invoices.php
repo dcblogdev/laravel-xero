@@ -69,7 +69,7 @@ class Invoices extends Xero
 
     public function attachment(string $invoiceId, ?string $attachmentId = null, ?string $fileName = null): string
     {
-        // Depending on the application we may want to get it by the FileName instead fo the AttachmentId
+        // Depending on the application, we may want to get it by the FileName instead of the AttachmentId
         $nameOrId = $attachmentId ? $attachmentId : $fileName;
 
         $result = parent::get('Invoices/'.$invoiceId.'/Attachments/'.$nameOrId);

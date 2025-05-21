@@ -304,7 +304,7 @@ class Xero
         return $token->tenant_id;
     }
 
-    public function getTenantName(): string
+    public function getTenantName(): ?string
     {
         // use id if passed otherwise use logged-in user
         $token = $this->getTokenData();
