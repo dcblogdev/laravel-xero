@@ -11,6 +11,10 @@ Watch a video walkthrough https://www.youtube.com/watch?v=sORX2z-AH1k
 
 Complete docs at https://dcblog.dev/docs/laravel-xero/v1/introduction
 
+## Demo application
+
+A demo application is available at https://github.com/dcblogdev/laravel-xero-demo
+
 ## Community
 
 There is a Discord community. https://discord.gg/VYau8hgwrm For quick help, ask questions in the appropriate channel.
