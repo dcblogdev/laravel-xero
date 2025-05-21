@@ -1,7 +1,3 @@
-## Community
-
-There is a Discord community. https://discord.gg/VYau8hgwrm For quick help, ask questions in the appropriate channel.
-
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/dcblogdev/laravel-xero.svg?style=flat-square)](https://packagist.org/packages/dcblogdev/laravel-xero)
 [![Total Downloads](https://img.shields.io/packagist/dt/dcblogdev/laravel-xero.svg?style=flat-square)](https://packagist.org/packages/dcblogdev/laravel-xero)
 
@@ -11,18 +7,13 @@ Laravel package for working with the Xero API
 
 Watch a video walkthrough https://www.youtube.com/watch?v=sORX2z-AH1k
 
-Xero API documentation can be found at:
-https://developer.xero.com/documentation/
-
-Before you can integrate with Xero you will need to create an app, go to https://developer.xero.com/myapps to register a new app.
-
-For the grant type select, Auth code (web app)
-
-For OAuth 2.0 redirect URI enter the full URL you want to use for connection to Xero from your application such as https://domain.com/xero/connect
-
 ## Documentation
 
 Complete docs at https://dcblog.dev/docs/laravel-xero/v1/introduction
+
+## Community
+
+There is a Discord community. https://discord.gg/VYau8hgwrm For quick help, ask questions in the appropriate channel.
 
 ## Change log
 
