@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dcblogdev\Xero;
 
 use Dcblogdev\Xero\Console\Commands\XeroKeepAliveCommand;
+use Dcblogdev\Xero\Console\Commands\XeroShowAllTokensCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,6 +30,7 @@ class XeroServiceProvider extends ServiceProvider
 
         $this->commands([
             XeroKeepAliveCommand::class,
+            XeroShowAllTokensCommand::class
         ]);
     }
 

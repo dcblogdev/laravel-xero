@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Dcblogdev\Xero\Console\Commands\XeroShowAllCommand;
+use Dcblogdev\Xero\Console\Commands\XeroShowAllTokensCommand;
 use Dcblogdev\Xero\Models\XeroToken;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Crypt;
 
 beforeEach(function () {
     // Register the command
-    $this->app->singleton('command.xero.show-all', fn () => new XeroShowAllCommand());
-    Artisan::registerCommand($this->app->make('command.xero.show-all'));
+    $this->app->singleton('command.xero.show-all-tokens', fn () => new XeroShowAllTokensCommand());
+    Artisan::registerCommand($this->app->make('command.xero.show-all-tokens'));
 });
 
 test('command displays message when no tokens exist', function () {
@@ -19,7 +19,7 @@ test('command displays message when no tokens exist', function () {
     XeroToken::query()->delete();
 
     // Run the command
-    $this->artisan('xero:show-all')
+    $this->artisan('xero:show-all-tokens')
         ->expectsOutput('All XERO Tokens in storage')
         ->assertExitCode(0);
 });
@@ -32,7 +32,7 @@ test('command displays tokens in table format', function () {
     ]);
 
     // Run the command
-    $this->artisan('xero:show-all')
+    $this->artisan('xero:show-all-tokens')
         ->expectsOutput('All XERO Tokens in storage')
         ->assertExitCode(0);
 
@@ -56,7 +56,7 @@ test('command handles encrypted tokens correctly', function () {
     ]);
 
     // Run the command
-    $this->artisan('xero:show-all')
+    $this->artisan('xero:show-all-tokens')
         ->expectsOutput('All XERO Tokens in storage')
         ->assertExitCode(0);
 
@@ -83,7 +83,7 @@ test('command handles decryption exceptions', function () {
     ]);
 
     // Run the command
-    $this->artisan('xero:show-all')
+    $this->artisan('xero:show-all-tokens')
         ->expectsOutput('All XERO Tokens in storage')
         ->assertExitCode(0);
 

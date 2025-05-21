@@ -9,14 +9,14 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 
-class XeroShowAllCommand extends Command
+class XeroShowAllTokensCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'xero:show-all';
+    protected $signature = 'xero:show-all-tokens';
 
     /**
      * The console command description.
