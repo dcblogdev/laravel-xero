@@ -7,6 +7,7 @@ namespace Dcblogdev\Xero;
 use Dcblogdev\Xero\Actions\StoreTokenAction;
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
+use Dcblogdev\Xero\Resources\Accounts;
 use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\CreditNotes;
 use Dcblogdev\Xero\Resources\Invoices;
@@ -21,7 +22,6 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
-use Throwable;
 
 /**
  * @method static array get (string $endpoint, array $params = [])
@@ -71,10 +71,14 @@ class Xero
         throw new RuntimeException($function.' is not a valid HTTP Verb');
     }
 
-
     public function setTenantId(string $tenant_id): void
     {
         $this->tenant_id = $tenant_id;
+    }
+
+    public function accounts(): Accounts
+    {
+        return new Accounts;
     }
 
     public function contacts(): Contacts
@@ -285,7 +289,6 @@ class Xero
         // Token is still valid, just return it
         return $token->tenant_name;
     }
-
 
     /**
      * @throws Exception
