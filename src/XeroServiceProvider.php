@@ -30,7 +30,7 @@ class XeroServiceProvider extends ServiceProvider
 
         $this->commands([
             XeroKeepAliveCommand::class,
-            XeroShowAllTokensCommand::class
+            XeroShowAllTokensCommand::class,
         ]);
     }
 

@@ -21,7 +21,6 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
-use Throwable;
 
 /**
  * @method static array get (string $endpoint, array $params = [])
@@ -70,7 +69,6 @@ class Xero
         // request verb is not in the $options array
         throw new RuntimeException($function.' is not a valid HTTP Verb');
     }
-
 
     public function setTenantId(string $tenant_id): void
     {
@@ -285,7 +283,6 @@ class Xero
         // Token is still valid, just return it
         return $token->tenant_name;
     }
-
 
     /**
      * @throws Exception
