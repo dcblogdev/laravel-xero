@@ -21,7 +21,6 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
-use Throwable;
 
 /**
  * @method static array get (string $endpoint, array $params = [])
@@ -45,6 +44,8 @@ class Xero
     protected static string $revokeUrl = 'https://identity.xero.com/connect/revocation';
 
     protected string $tenant_id = '';
+
+    protected bool $returnFullResponse = false;
 
     /**
      * __call catches all requests when no found method is requested
@@ -71,10 +72,16 @@ class Xero
         throw new RuntimeException($function.' is not a valid HTTP Verb');
     }
 
-
     public function setTenantId(string $tenant_id): void
     {
         $this->tenant_id = $tenant_id;
+    }
+
+    public function withFullResponse(): self
+    {
+        $this->returnFullResponse = true;
+
+        return $this;
     }
 
     public function contacts(): Contacts
@@ -285,7 +292,6 @@ class Xero
         // Token is still valid, just return it
         return $token->tenant_name;
     }
-
 
     /**
      * @throws Exception

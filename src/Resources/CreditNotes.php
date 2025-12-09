@@ -29,6 +29,10 @@ class CreditNotes extends Xero
 
         $result = parent::get('CreditNotes?'.$queryString);
 
+        if ($this->returnFullResponse) {
+            return $result['body'];
+        }
+
         return $result['body']['CreditNotes'];
     }
 

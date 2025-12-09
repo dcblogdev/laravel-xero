@@ -29,6 +29,10 @@ class Invoices extends Xero
 
         $result = parent::get('Invoices?'.$queryString);
 
+        if ($this->returnFullResponse) {
+            return $result['body'];
+        }
+
         return $result['body']['Invoices'];
     }
 
