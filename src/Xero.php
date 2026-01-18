@@ -46,6 +46,8 @@ class Xero
 
     protected string $tenant_id = '';
 
+    protected bool $returnFullResponse = false;
+
     /**
      * __call catches all requests when no found method is requested
      *

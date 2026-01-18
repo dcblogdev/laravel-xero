@@ -29,6 +29,10 @@ class Contacts extends Xero
 
         $result = parent::get('Contacts?'.$queryString);
 
+        if ($this->returnFullResponse) {
+            return $result['body'];
+        }
+
         return $result['body']['Contacts'];
     }
 
