@@ -20,147 +20,433 @@ test('filter returns object', function () {
     expect($filter)->toBeObject();
 });
 
-test('get returns only invoices array by default', function () {
-    Http::fake([
-        'api.xero.com/api.xro/2.0/Invoices*' => Http::response([
-            'Id' => 'test-id',
-            'Status' => 'OK',
-            'ProviderName' => 'Test Provider',
-            'DateTimeUTC' => '/Date(1234567890)/',
-            'Invoices' => [
-                ['InvoiceID' => '1', 'InvoiceNumber' => 'INV-001'],
-                ['InvoiceID' => '2', 'InvoiceNumber' => 'INV-002'],
-            ],
-        ], 200),
-    ]);
+// Email method tests
+test('email returns structured response on successful send', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
 
     XeroToken::create([
         'id' => 0,
-        'access_token' => '1234',
+        'access_token' => 'test-token',
         'expires_in' => now()->addMinutes(25),
         'scopes' => 'accounting.transactions',
-        'tenant_id' => 'test-tenant',
+        'tenant_id' => 'test-tenant-id',
     ]);
 
-    $result = Xero::invoices()->get();
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId.'/Email' => Http::response('', 204),
+    ]);
 
-    expect($result)->toBeArray()
-        ->and($result)->toHaveCount(2)
-        ->and($result[0])->toHaveKey('InvoiceID')
-        ->and($result)->not->toHaveKey('Id')
-        ->and($result)->not->toHaveKey('Status');
+    $result = Xero::invoices()->email($invoiceId);
+
+    expect($result)->toBe([
+        'status' => 204,
+        'success' => true,
+        'message' => 'Invoice email sent successfully',
+        'body' => [],
+    ]);
 });
 
-test('get returns full response body when withFullResponse is called', function () {
-    Http::fake([
-        'api.xero.com/api.xro/2.0/Invoices*' => Http::response([
-            'Id' => 'test-id',
-            'Status' => 'OK',
-            'ProviderName' => 'Test Provider',
-            'DateTimeUTC' => '/Date(1234567890)/',
-            'Invoices' => [
-                ['InvoiceID' => '1', 'InvoiceNumber' => 'INV-001'],
-                ['InvoiceID' => '2', 'InvoiceNumber' => 'INV-002'],
-            ],
-        ], 200),
-    ]);
+test('email returns structured error response on validation error', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
 
     XeroToken::create([
         'id' => 0,
-        'access_token' => '1234',
+        'access_token' => 'test-token',
         'expires_in' => now()->addMinutes(25),
         'scopes' => 'accounting.transactions',
-        'tenant_id' => 'test-tenant',
+        'tenant_id' => 'test-tenant-id',
     ]);
 
-    $result = Xero::invoices()->withFullResponse()->get();
+    $errorResponse = [
+        'Type' => 'ValidationException',
+        'Message' => 'Invoice cannot be emailed',
+        'Detail' => 'Invoice status is invalid for emailing',
+    ];
 
-    expect($result)->toBeArray()
-        ->and($result)->toHaveKey('Id')
-        ->and($result)->toHaveKey('Status')
-        ->and($result)->toHaveKey('ProviderName')
-        ->and($result)->toHaveKey('DateTimeUTC')
-        ->and($result)->toHaveKey('Invoices')
-        ->and($result['Id'])->toBe('test-id')
-        ->and($result['Status'])->toBe('OK')
-        ->and($result['Invoices'])->toBeArray()
-        ->and($result['Invoices'])->toHaveCount(2);
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId.'/Email' => Http::response($errorResponse, 400),
+    ]);
+
+    $result = Xero::invoices()->email($invoiceId);
+
+    expect($result)->toHaveKeys(['status', 'success', 'errors', 'message', 'body'])
+        ->and($result['status'])->toBe(400)
+        ->and($result['success'])->toBeFalse()
+        ->and($result['message'])->toBe('Invoice cannot be emailed')
+        ->and($result['errors'])->toBe($errorResponse)
+        ->and($result['body'])->toBe($errorResponse);
 });
 
-test('get returns full response with pagination when withFullResponse is called', function () {
-    Http::fake([
-        'api.xero.com/api.xro/2.0/Invoices*' => Http::response([
-            'Id' => 'test-id',
-            'Status' => 'OK',
-            'ProviderName' => 'Test Provider',
-            'DateTimeUTC' => '/Date(1234567890)/',
-            'pagination' => [
-                'page' => 1,
-                'pageSize' => 100,
-                'pageCount' => 1,
-                'itemCount' => 2,
-            ],
-            'Invoices' => [
-                ['InvoiceID' => '1', 'InvoiceNumber' => 'INV-001'],
-                ['InvoiceID' => '2', 'InvoiceNumber' => 'INV-002'],
-            ],
-        ], 200),
-    ]);
+test('email returns structured error response on rate limit error', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
 
     XeroToken::create([
         'id' => 0,
-        'access_token' => '1234',
+        'access_token' => 'test-token',
         'expires_in' => now()->addMinutes(25),
         'scopes' => 'accounting.transactions',
-        'tenant_id' => 'test-tenant',
+        'tenant_id' => 'test-tenant-id',
     ]);
 
-    $result = Xero::invoices()->withFullResponse()->get();
+    $errorResponse = [
+        'Type' => 'RateLimitException',
+        'Message' => 'Rate limit exceeded',
+        'Detail' => 'Daily email limit reached',
+    ];
 
-    expect($result)->toBeArray()
-        ->and($result)->toHaveKey('pagination')
-        ->and($result['pagination'])->toBeArray()
-        ->and($result['pagination']['page'])->toBe(1)
-        ->and($result['pagination']['pageSize'])->toBe(100)
-        ->and($result['pagination']['itemCount'])->toBe(2);
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId.'/Email' => Http::response($errorResponse, 400),
+    ]);
+
+    $result = Xero::invoices()->email($invoiceId);
+
+    expect($result)->toHaveKeys(['status', 'success', 'errors', 'message', 'body'])
+        ->and($result['status'])->toBe(400)
+        ->and($result['success'])->toBeFalse()
+        ->and($result['message'])->toBe('Rate limit exceeded')
+        ->and($result['errors'])->toBe($errorResponse)
+        ->and($result['body'])->toBe($errorResponse);
 });
 
-test('withFullResponse can be chained with filter', function () {
-    Http::fake([
-        'api.xero.com/api.xro/2.0/Invoices*' => Http::response([
-            'Id' => 'test-id',
-            'Status' => 'OK',
-            'ProviderName' => 'Test Provider',
-            'DateTimeUTC' => '/Date(1234567890)/',
-            'Invoices' => [
-                ['InvoiceID' => '1', 'InvoiceNumber' => 'INV-001'],
-            ],
-        ], 200),
-    ]);
+test('email throws exception on non-400 errors', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
 
     XeroToken::create([
         'id' => 0,
-        'access_token' => '1234',
+        'access_token' => 'test-token',
         'expires_in' => now()->addMinutes(25),
         'scopes' => 'accounting.transactions',
-        'tenant_id' => 'test-tenant',
+        'tenant_id' => 'test-tenant-id',
     ]);
 
-    $result = Xero::invoices()
-        ->filter('ids', '1')
-        ->withFullResponse()
-        ->get();
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId.'/Email' => Http::response([
+            'Type' => 'ServerError',
+            'Message' => 'Internal server error',
+        ], 500),
+    ]);
 
-    expect($result)->toBeArray()
-        ->and($result)->toHaveKey('Id')
-        ->and($result)->toHaveKey('Invoices');
+    Xero::invoices()->email($invoiceId);
+})->throws(Exception::class);
+
+// Get email recipients tests
+test('getEmailRecipients returns primary contact email', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+    $contactId = '9fe61eb6-e99e-436b-91e7-872b3418681e';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Contact' => [
+                        'ContactID' => $contactId,
+                    ],
+                ],
+            ],
+        ]),
+        'api.xero.com/api.xro/2.0/Contacts/'.$contactId => Http::response([
+            'Contacts' => [
+                [
+                    'ContactID' => $contactId,
+                    'EmailAddress' => 'jon.baird@tpfire.co.uk',
+                    'ContactPersons' => [],
+                ],
+            ],
+        ]),
+    ]);
+
+    $recipients = Xero::invoices()->getEmailRecipients($invoiceId);
+
+    expect($recipients)->toBe(['jon.baird@tpfire.co.uk']);
 });
 
-test('withFullResponse returns self for fluent chaining', function () {
-    $invoices = new Invoices;
+test('getEmailRecipients includes contact persons with IncludeInEmails true', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+    $contactId = '9fe61eb6-e99e-436b-91e7-872b3418681e';
 
-    $result = $invoices->withFullResponse();
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
 
-    expect($result)->toBeInstanceOf(Invoices::class)
-        ->and($result)->toBe($invoices);
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Contact' => [
+                        'ContactID' => $contactId,
+                    ],
+                ],
+            ],
+        ]),
+        'api.xero.com/api.xro/2.0/Contacts/'.$contactId => Http::response([
+            'Contacts' => [
+                [
+                    'ContactID' => $contactId,
+                    'EmailAddress' => 'jon.baird@tpfire.co.uk',
+                    'ContactPersons' => [
+                        [
+                            'FirstName' => 'Jamie',
+                            'LastName' => 'Groom',
+                            'EmailAddress' => 'Jamie.Groom@tpfire.co.uk',
+                            'IncludeInEmails' => true,
+                        ],
+                        [
+                            'FirstName' => 'John',
+                            'LastName' => 'Doe',
+                            'EmailAddress' => 'john.doe@tpfire.co.uk',
+                            'IncludeInEmails' => false,
+                        ],
+                    ],
+                ],
+            ],
+        ]),
+    ]);
+
+    $recipients = Xero::invoices()->getEmailRecipients($invoiceId);
+
+    expect($recipients)->toHaveCount(2)
+        ->and($recipients)->toContain('jon.baird@tpfire.co.uk')
+        ->and($recipients)->toContain('Jamie.Groom@tpfire.co.uk')
+        ->and($recipients)->not->toContain('john.doe@tpfire.co.uk');
 });
+
+test('getEmailRecipients returns empty array when no contact ID', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Contact' => [],
+                ],
+            ],
+        ]),
+    ]);
+
+    $recipients = Xero::invoices()->getEmailRecipients($invoiceId);
+
+    expect($recipients)->toBe([]);
+});
+
+test('getEmailRecipients returns empty array when no email address', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+    $contactId = '9fe61eb6-e99e-436b-91e7-872b3418681e';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Contact' => [
+                        'ContactID' => $contactId,
+                    ],
+                ],
+            ],
+        ]),
+        'api.xero.com/api.xro/2.0/Contacts/'.$contactId => Http::response([
+            'Contacts' => [
+                [
+                    'ContactID' => $contactId,
+                    'ContactPersons' => [],
+                ],
+            ],
+        ]),
+    ]);
+
+    $recipients = Xero::invoices()->getEmailRecipients($invoiceId);
+
+    expect($recipients)->toBe([]);
+});
+
+// Can email validation tests
+test('canEmail returns true for ACCREC invoice with SUBMITTED status', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Type' => 'ACCREC',
+                    'Status' => 'SUBMITTED',
+                ],
+            ],
+        ]),
+    ]);
+
+    $result = Xero::invoices()->canEmail($invoiceId);
+
+    expect($result)->toBeTrue();
+});
+
+test('canEmail returns true for ACCREC invoice with AUTHORISED status', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Type' => 'ACCREC',
+                    'Status' => 'AUTHORISED',
+                ],
+            ],
+        ]),
+    ]);
+
+    $result = Xero::invoices()->canEmail($invoiceId);
+
+    expect($result)->toBeTrue();
+});
+
+test('canEmail returns true for ACCREC invoice with PAID status', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Type' => 'ACCREC',
+                    'Status' => 'PAID',
+                ],
+            ],
+        ]),
+    ]);
+
+    $result = Xero::invoices()->canEmail($invoiceId);
+
+    expect($result)->toBeTrue();
+});
+
+test('canEmail returns false for ACCREC invoice with DRAFT status', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Type' => 'ACCREC',
+                    'Status' => 'DRAFT',
+                ],
+            ],
+        ]),
+    ]);
+
+    $result = Xero::invoices()->canEmail($invoiceId);
+
+    expect($result)->toBeFalse();
+});
+
+test('canEmail returns false for ACCPAY invoice type', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Invoices' => [
+                [
+                    'InvoiceID' => $invoiceId,
+                    'Type' => 'ACCPAY',
+                    'Status' => 'AUTHORISED',
+                ],
+            ],
+        ]),
+    ]);
+
+    $result = Xero::invoices()->canEmail($invoiceId);
+
+    expect($result)->toBeFalse();
+});
+
+test('canEmail throws exception when invoice not found', function () {
+    $invoiceId = 'aa682059-c8ec-44b9-bc7f-344c94e1ffae';
+
+    XeroToken::create([
+        'id' => 0,
+        'access_token' => 'test-token',
+        'expires_in' => now()->addMinutes(25),
+        'scopes' => 'accounting.transactions',
+        'tenant_id' => 'test-tenant-id',
+    ]);
+
+    Http::fake([
+        'api.xero.com/api.xro/2.0/Invoices/'.$invoiceId => Http::response([
+            'Type' => 'NotFound',
+            'Message' => 'Invoice not found',
+        ], 404),
+    ]);
+
+    Xero::invoices()->canEmail($invoiceId);
+})->throws(Exception::class);

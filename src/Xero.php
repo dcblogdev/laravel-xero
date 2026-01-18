@@ -7,6 +7,7 @@ namespace Dcblogdev\Xero;
 use Dcblogdev\Xero\Actions\StoreTokenAction;
 use Dcblogdev\Xero\Actions\tokenExpiredAction;
 use Dcblogdev\Xero\Models\XeroToken;
+use Dcblogdev\Xero\Resources\Accounts;
 use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\CreditNotes;
 use Dcblogdev\Xero\Resources\Invoices;
@@ -77,11 +78,9 @@ class Xero
         $this->tenant_id = $tenant_id;
     }
 
-    public function withFullResponse(): self
+    public function accounts(): Accounts
     {
-        $this->returnFullResponse = true;
-
-        return $this;
+        return new Accounts;
     }
 
     public function contacts(): Contacts
