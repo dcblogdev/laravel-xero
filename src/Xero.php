@@ -78,6 +78,13 @@ class Xero
         $this->tenant_id = $tenant_id;
     }
 
+    public function withFullResponse(): static
+    {
+        $this->returnFullResponse = true;
+
+        return $this;
+    }
+
     public function accounts(): Accounts
     {
         return new Accounts;
