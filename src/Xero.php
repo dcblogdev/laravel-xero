@@ -69,13 +69,20 @@ class Xero
         if (in_array($function, $options)) {
             return $this->guzzle($function, $path, $data, $raw, $accept, $headers);
         }
-        // request verb is not in the $options array
+        // the request verb is not in the $options array
         throw new RuntimeException($function.' is not a valid HTTP Verb');
     }
 
     public function setTenantId(string $tenant_id): void
     {
         $this->tenant_id = $tenant_id;
+    }
+
+    public function withFullResponse(): static
+    {
+        $this->returnFullResponse = true;
+
+        return $this;
     }
 
     public function accounts(): Accounts
