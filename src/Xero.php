@@ -16,6 +16,7 @@ use Dcblogdev\Xero\Traits\XeroHelpersTrait;
 use Exception;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -357,7 +358,8 @@ class Xero
         }
 
         try {
-            $response = Http::withToken($this->getAccessToken())
+            $response = Http::retry([200, 500, 1000], fn ($exception) => $exception instanceof ConnectionException || ($exception instanceof RequestException && $exception->response->serverError()))
+                ->withToken($this->getAccessToken())
                 ->withHeaders(array_merge(['Xero-tenant-id' => $this->getTenantId()], $headers))
                 ->accept($accept)
                 ->$type(self::$baseUrl.$request, $data)
