@@ -92,22 +92,34 @@ class Xero
 
     public function contacts(): Contacts
     {
-        return new Contacts;
+        $resource = new Contacts;
+        $resource->setTenantId($this->tenant_id);
+
+        return $resource;
     }
 
     public function creditnotes(): CreditNotes
     {
-        return new CreditNotes;
+        $resource = new CreditNotes;
+        $resource->setTenantId($this->tenant_id);
+
+        return $resource;
     }
 
     public function invoices(): Invoices
     {
-        return new Invoices;
+        $resource = new Invoices;
+        $resource->setTenantId($this->tenant_id);
+
+        return $resource;
     }
 
     public function webhooks(): Webhooks
     {
-        return new Webhooks;
+        $resource = new Webhooks;
+        $resource->setTenantId($this->tenant_id);
+
+        return $resource;
     }
 
     public function isTokenValid(): bool
