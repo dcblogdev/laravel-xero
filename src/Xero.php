@@ -146,21 +146,25 @@ class Xero
 
     public function disconnect(): void
     {
-        try {
-            $token = $this->getTokenData();
+        $token = $this->getTokenData();
 
+        if ($token === null) {
+            return;
+        }
+
+        try {
             Http::withHeaders([
                 'authorization' => 'Basic '.base64_encode(config('xero.clientId').':'.config('xero.clientSecret')),
             ])
                 ->asForm()
                 ->post(self::$revokeUrl, [
                     'token' => $token->refresh_token,
-                ])->throw();
-
-            $token->delete();
-        } catch (Exception $e) {
-            throw new RuntimeException('error getting tenant: '.$e->getMessage());
+                ]);
+        } catch (Exception) {
+            // Ignore revocation errors — local token will still be deleted below.
         }
+
+        $token->delete();
     }
 
     /**
