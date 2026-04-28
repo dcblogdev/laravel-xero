@@ -43,16 +43,16 @@ class PurchaseOrders extends Xero
         return $result['body']['PurchaseOrders'][0];
     }
 
-    public function update(string $purchaseOrderId, array $data): array
+    public function update(string $purchaseOrderId, array $data, array $headers = []): array
     {
-        $result = $this->post('PurchaseOrders/'.$purchaseOrderId, $data);
+        $result = $this->post('PurchaseOrders/'.$purchaseOrderId, $data, false, 'application/json', $headers);
 
         return $result['body']['PurchaseOrders'][0];
     }
 
-    public function store(array $data): array
+    public function store(array $data, array $headers = []): array
     {
-        $result = $this->post('PurchaseOrders', $data);
+        $result = $this->post('PurchaseOrders', $data, false, 'application/json', $headers);
 
         return $result['body']['PurchaseOrders'][0];
     }

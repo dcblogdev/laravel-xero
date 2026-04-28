@@ -28,7 +28,7 @@ use RuntimeException;
 /**
  * @method static array get (string $endpoint, array $params = [])
  * @method static array put (string $endpoint, array $params = [])
- * @method static array post (string $endpoint, array $params = [])
+ * @method static array post (string $endpoint, array $params = [], bool $raw = false, string $accept = 'application/json', array $headers = [])
  * @method static array patch (string $endpoint, array $params = [])
  * @method static array delete (string $endpoint, array $params = [])
  */
@@ -367,7 +367,7 @@ class Xero
         }
 
         try {
-            $response = Http::retry([200, 500, 1000], fn ($exception) => $exception instanceof ConnectionException || ($exception instanceof RequestException && $exception->response->serverError()))
+            $response = Http::retry([200, 500, 1000], 0, fn ($exception) => $exception instanceof ConnectionException || ($exception instanceof RequestException && $exception->response->serverError()))
                 ->withToken($this->getAccessToken())
                 ->withHeaders(array_merge(['Xero-tenant-id' => $this->getTenantId()], $headers))
                 ->accept($accept)
