@@ -11,6 +11,7 @@ use Dcblogdev\Xero\Resources\Accounts;
 use Dcblogdev\Xero\Resources\Contacts;
 use Dcblogdev\Xero\Resources\CreditNotes;
 use Dcblogdev\Xero\Resources\Invoices;
+use Dcblogdev\Xero\Resources\PurchaseOrders;
 use Dcblogdev\Xero\Resources\Webhooks;
 use Dcblogdev\Xero\Traits\XeroHelpersTrait;
 use Exception;
@@ -110,6 +111,14 @@ class Xero
     public function invoices(): Invoices
     {
         $resource = new Invoices;
+        $resource->setTenantId($this->tenant_id);
+
+        return $resource;
+    }
+
+    public function purchaseorders(): PurchaseOrders
+    {
+        $resource = new PurchaseOrders;
         $resource->setTenantId($this->tenant_id);
 
         return $resource;
