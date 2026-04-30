@@ -31,6 +31,8 @@ class ContactDTO
         public ?array $phones = [],
         /** @var array<int, array<string, mixed>> */
         public ?array $contactPersons = [],
+        /** @var array<int, array<string, mixed>> */
+        public ?array $contactGroups = [],
         public ?bool $hasAttachments = false,
         public ?bool $hasValidationErrors = false,
     ) {}
@@ -105,6 +107,21 @@ class ContactDTO
     }
 
     /**
+     * Create a contact group reference array for the contact
+     *
+     * @return array<string, string|null>
+     */
+    public static function createContactGroup(
+        ?string $contactGroupId = null,
+        ?string $name = null
+    ): array {
+        return array_filter([
+            'ContactGroupID' => $contactGroupId,
+            'Name' => $name,
+        ], fn (mixed $value) => $value !== null);
+    }
+
+    /**
      * Convert the DTO to an array for the Xero API
      *
      * @return array<string, mixed>
@@ -131,6 +148,7 @@ class ContactDTO
             'Addresses' => $this->addresses,
             'Phones' => $this->phones,
             'ContactPersons' => $this->contactPersons,
+            'ContactGroups' => $this->contactGroups,
             'HasAttachments' => $this->hasAttachments,
             'HasValidationErrors' => $this->hasValidationErrors,
         ], function (mixed $value) {

@@ -28,6 +28,7 @@ test('contact dto can be instantiated with default values', function () {
         ->and($contactDTO->addresses)->toBe([])
         ->and($contactDTO->phones)->toBe([])
         ->and($contactDTO->contactPersons)->toBe([])
+        ->and($contactDTO->contactGroups)->toBe([])
         ->and($contactDTO->hasAttachments)->toBeFalse()
         ->and($contactDTO->hasValidationErrors)->toBeFalse();
 });
@@ -53,6 +54,7 @@ test('contact dto can be instantiated with custom values', function () {
         addresses: [['AddressType' => 'POBOX']],
         phones: [['PhoneType' => 'MOBILE']],
         contactPersons: [['FirstName' => 'Jane']],
+        contactGroups: [['ContactGroupID' => 'group-1', 'Name' => 'Wholesale']],
         hasAttachments: true,
         hasValidationErrors: true
     );
@@ -77,6 +79,7 @@ test('contact dto can be instantiated with custom values', function () {
         ->and($contactDTO->addresses)->toBe([['AddressType' => 'POBOX']])
         ->and($contactDTO->phones)->toBe([['PhoneType' => 'MOBILE']])
         ->and($contactDTO->contactPersons)->toBe([['FirstName' => 'Jane']])
+        ->and($contactDTO->contactGroups)->toBe([['ContactGroupID' => 'group-1', 'Name' => 'Wholesale']])
         ->and($contactDTO->hasAttachments)->toBeTrue()
         ->and($contactDTO->hasValidationErrors)->toBeTrue();
 });
@@ -178,6 +181,42 @@ test('toArray method returns correct array structure', function () {
         ->and($array)->toHaveKey('ContactPersons')
         ->and($array['ContactPersons'][0])->toHaveKey('FirstName', 'Jane')
         ->and($array['ContactPersons'][0])->toHaveKey('LastName', 'Smith');
+});
+
+test('createContactGroup static method returns correct array', function () {
+    $contactGroup = ContactDTO::createContactGroup(
+        contactGroupId: 'group-uuid-1234',
+        name: 'Wholesale'
+    );
+
+    expect($contactGroup)->toBe([
+        'ContactGroupID' => 'group-uuid-1234',
+        'Name' => 'Wholesale',
+    ]);
+});
+
+test('createContactGroup static method filters out null values', function () {
+    $contactGroup = ContactDTO::createContactGroup(
+        contactGroupId: 'group-uuid-1234'
+    );
+
+    expect($contactGroup)->toBe(['ContactGroupID' => 'group-uuid-1234'])
+        ->and($contactGroup)->not->toHaveKey('Name');
+});
+
+test('toArray method includes contact groups', function () {
+    $contactDTO = new ContactDTO(
+        name: 'Test Company',
+        contactGroups: [
+            ContactDTO::createContactGroup('group-uuid-1234', 'Wholesale'),
+        ]
+    );
+
+    $array = $contactDTO->toArray();
+
+    expect($array)->toHaveKey('ContactGroups')
+        ->and($array['ContactGroups'][0])->toHaveKey('ContactGroupID', 'group-uuid-1234')
+        ->and($array['ContactGroups'][0])->toHaveKey('Name', 'Wholesale');
 });
 
 test('toArray method filters out null values', function () {
