@@ -43,16 +43,16 @@ class CreditNotes extends Xero
         return $result['body']['CreditNotes'][0];
     }
 
-    public function update(string $contactId, array $data): array
+    public function update(string $contactId, array $data, array $headers = []): array
     {
-        $result = $this->post('CreditNotes/'.$contactId, $data);
+        $result = $this->post('CreditNotes/'.$contactId, $data, false, 'application/json', $headers);
 
         return $result['body']['CreditNotes'][0];
     }
 
-    public function store(array $data): array
+    public function store(array $data, array $headers = []): array
     {
-        $result = $this->post('CreditNotes', $data);
+        $result = $this->post('CreditNotes', $data, false, 'application/json', $headers);
 
         return $result['body']['CreditNotes'][0];
     }

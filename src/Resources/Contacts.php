@@ -43,16 +43,16 @@ class Contacts extends Xero
         return $result['body']['Contacts'][0];
     }
 
-    public function update(string $contactId, array $data): array
+    public function update(string $contactId, array $data, array $headers = []): array
     {
-        $result = $this->post('Contacts/'.$contactId, $data);
+        $result = $this->post('Contacts/'.$contactId, $data, false, 'application/json', $headers);
 
         return $result['body']['Contacts'][0];
     }
 
-    public function store(array $data): array
+    public function store(array $data, array $headers = []): array
     {
-        $result = $this->post('Contacts', $data);
+        $result = $this->post('Contacts', $data, false, 'application/json', $headers);
 
         return $result['body']['Contacts'][0];
     }
